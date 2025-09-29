@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kochi Metro — Ticket Booking Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f3f6fb;
+        --card: #fff;
+        --accent: #0b63d6;
+        --muted: #6b7280;
+        --glass: rgba(255, 255, 255, 0.6);
+        --shadow: 0 8px 20px rgba(11, 99, 214, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial;
+        background: linear-gradient(180deg, #e9f0ff 0%, var(--bg) 60%);
+        min-height: 100vh;
+        margin: 0;
+        padding: 32px 0;
+        color: #0f1724;
+        text-align: center;
+      }
+      .wrap {
+        max-width: 700px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        background: var(--card);
+        padding: 10px 14px;
+        border-radius: 10px;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo h1 {
+        font-size: 16px;
+        margin: 0;
+        color: var(--accent);
+      }
+      .welcome {
+        font-weight: 600;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .panel {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.9),
+          var(--card)
+        );
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 500px;
+        text-align: left;
+      }
+      h2 {
+        margin: 0 0 12px 0;
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+      select,
+      input[type="text"],
+      input[type="email"],
+      input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e6eefb;
+        background: transparent;
+        font-size: 14px;
+      }
+      .row {
+        display: flex;
+        gap: 12px;
+      }
+      .row > * {
+        flex: 1;
+      }
+      button.primary {
+        background: var(--accent);
+        color: white;
+        padding: 10px 12px;
+        border-radius: 10px;
+        border: 0;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid #dbeafe;
+        padding: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .ticket {
+        padding: 18px;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #fff, #fbfdff);
+        border: 1px solid rgba(11, 99, 214, 0.06);
+        width: 100%;
+        max-width: 500px;
+        text-align: left;
+      }
+      .ticket .top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .ticket h3 {
+        margin: 0;
+      }
+      .meta {
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .stations {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 12px 0;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        background: var(--accent);
+        border-radius: 50%;
+      }
+      .qr {
+        margin-top: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      #qrcode {
+        width: 200px;
+        height: 200px;
+        padding: 0;
+        background: #fff;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      footer.small {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+      .hidden {
+        display: none;
+      }
+      @media (max-width: 600px) {
+        .row {
+          flex-direction: column;
+        }
+        .panel,
+        .ticket {
+          max-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="logo">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="6" fill="#0B63D6" />
+            <path
+              d="M7 12h10M7 16h6"
+              stroke="#fff"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+          <div>
+            <h1>Kochi Metro</h1>
+            <div style="font-size: 12px; color: var(--muted)">
+              Welcome to online ticket booking
+            </div>
+          </div>
+        </div>
+        <div class="welcome">Hello, Passenger — Book quickly & show QR at gate</div>
+      </header>
+
+      <!-- Booking Form -->
+      <section class="panel" id="bookingForm">
+        <h2>Book a ticket</h2>
+        <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px">
+          Select departure and destination. Fare is ₹4 per km.
+        </div>
+        <div style="display: grid; gap: 12px">
+          <div>
+            <label for="from">Departure</label>
+            <select id="from"></select>
+          </div>
+          <div>
+            <label for="to">Destination</label>
+            <select id="to"></select>
+          </div>
+          <div class="row">
+            <div>
+              <label for="name">Passenger name</label>
+              <input id="name" type="text" placeholder="Your name (for ticket)" />
+            </div>
+            <div>
+              <label for="count">Passengers</label>
+              <input id="count" type="number" value="1" min="1" />
+            </div>
+          </div>
+          <button id="nextBtn" class="primary">Proceed to Details</button>
+        </div>
+      </section>
+
+      <!-- Details Form -->
+      <section class="panel hidden" id="detailsForm">
+        <h2>Passenger Details</h2>
+        <div class="row">
+          <div>
+            <label for="email">Email</label>
+            <input id="email" type="email" placeholder="you@example.com" />
+          </div>
+          <div>
+            <label for="phone">Phone</label>
+            <input id="phone" type="text" placeholder="10-digit number" />
+          </div>
+        </div>
+        <div style="margin-top: 12px">
+          <label for="payment">Payment Method</label>
+          <select id="payment">
+            <option value="card">Credit/Debit Card</option>
+            <option value="upi">UPI</option>
+            <option value="netbanking">Net Banking</option>
+          </select>
+        </div>
+        <div class="row" style="margin-top: 12px">
+          <button id="calc" class="primary">Generate Ticket</button>
+          <button id="backBtn" class="ghost">Back</button>
+        </div>
+      </section>
+
+      <!-- Ticket -->
+      <aside class="hidden" id="ticketAside">
+        <div class="ticket" id="ticketCard">
+          <div class="top">
+            <div>
+              <h3 id="ticketTitle">Your e-Ticket</h3>
+              <div class="meta" id="ticketMeta">No ticket generated yet</div>
+            </div>
+            <div style="text-align: right">
+              <div
+                style="font-weight: 700; font-size: 18px; color: var(--accent)"
+                id="fareAmount"
+              >
+                ₹0.00
+              </div>
+              <div class="meta">Total fare</div>
+            </div>
+          </div>
+
+          <div class="stations">
+            <div>
+              <div class="meta">From</div>
+              <div id="ticketFrom" style="font-weight: 600">—</div>
+            </div>
+            <div style="flex: 1; text-align: center; color: var(--muted)">→</div>
+            <div>
+              <div class="meta">To</div>
+              <div id="ticketTo" style="font-weight: 600">—</div>
+            </div>
+          </div>
+
+          <div class="meta">
+            Distance: <span id="distanceKm">0</span> km • Fare per km: ₹4
+          </div>
+          <div style="margin-top: 4px" class="meta">
+            Date: <span id="ticketDate">—</span> • Time: <span id="ticketTime">—</span>
+          </div>
+
+          <div class="qr">
+            <div id="qrcode"></div>
+            <div style="flex: 1">
+              <div style="font-size: 13px; color: var(--muted)">Passenger</div>
+              <div id="ticketName" style="font-weight: 700">—</div>
+              <div id="ticketCount" class="meta">0 passenger(s)</div>
+            </div>
+          </div>
+        </div>
+        <button id="downloadTicket" class="primary" style="margin-top: 20px">
+          Download Ticket
+        </button>
+      </aside>
+    </div>
+
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+
+    <!-- html2canvas Library for Screenshot -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+    <script>
+      // Stations and their distances from a reference point (e.g., Kochi Central)
+      const stations = {
+        Aluva: 18,
+        Edapally: 11,
+        Ernakulam_Jn: 9,
+        Palarivattom: 6,
+        Maharajas: 4,
+        Kaloor: 2,
+        Lissie: 0,
+        MG_Road: 1,
+        Kadavanthra: 3,
+        Elamkulam: 5,
+        Vyttila: 7,
+        Edakochi: 13,
+      };
+
+      // Populate select options for stations
+      const fromSelect = document.getElementById("from");
+      const toSelect = document.getElementById("to");
+
+      Object.keys(stations).forEach((station) => {
+        const optionFrom = document.createElement("option");
+        optionFrom.value = station;
+        optionFrom.textContent = station.replace(/_/g, " ");
+        fromSelect.appendChild(optionFrom);
+
+        const optionTo = document.createElement("option");
+        optionTo.value = station;
+        optionTo.textContent = station.replace(/_/g, " ");
+        toSelect.appendChild(optionTo);
+      });
+
+      // Elements
+      const bookingForm = document.getElementById("bookingForm");
+      const detailsForm = document.getElementById("detailsForm");
+      const ticketAside = document.getElementById("ticketAside");
+
+      const nextBtn = document.getElementById("nextBtn");
+      const backBtn = document.getElementById("backBtn");
+      const calcBtn = document.getElementById("calc");
+
+      const nameInput = document.getElementById("name");
+      const countInput = document.getElementById("count");
+      const emailInput = document.getElementById("email");
+      const phoneInput = document.getElementById("phone");
+      const paymentSelect = document.getElementById("payment");
+
+      const ticketFrom = document.getElementById("ticketFrom");
+      const ticketTo = document.getElementById("ticketTo");
+      const distanceKmSpan = document.getElementById("distanceKm");
+      const fareAmount = document.getElementById("fareAmount");
+      const ticketName = document.getElementById("ticketName");
+      const ticketCount = document.getElementById("ticketCount");
+      const ticketDate = document.getElementById("ticketDate");
+      const ticketTime = document.getElementById("ticketTime");
+      const ticketMeta = document.getElementById("ticketMeta");
+      const qrcodeDiv = document.getElementById("qrcode");
+
+      const downloadBtn = document.getElementById("downloadTicket");
+
+      // Fare per km constant
+      const FARE_PER_KM = 4;
+
+      nextBtn.addEventListener("click", () => {
+        const fromStation = fromSelect.value;
+        const toStation = toSelect.value;
+        const passengerName = nameInput.value.trim();
+        const passengerCount = parseInt(countInput.value, 10);
+
+        if (!fromStation || !toStation) {
+          alert("Please select both departure and destination stations.");
+          return;
+        }
+        if (fromStation === toStation) {
+          alert("Departure and destination cannot be the same.");
+          return;
+        }
+        if (!passengerName) {
+          alert("Please enter passenger name.");
+          return;
+        }
+        if (!passengerCount || passengerCount < 1) {
+          alert("Please enter a valid passenger count.");
+          return;
+        }
+
+        bookingForm.classList.add("hidden");
+        detailsForm.classList.remove("hidden");
+      });
+
+      backBtn.addEventListener("click", () => {
+        detailsForm.classList.add("hidden");
+        bookingForm.classList.remove("hidden");
+      });
+
+      calcBtn.addEventListener("click", () => {
+        // Validate details
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        if (!email) {
+          alert("Please enter your email.");
+          return;
+        }
+        if (!phone || !/^\d{10}$/.test(phone)) {
+          alert("Please enter a valid 10-digit phone number.");
+          return;
+        }
+
+        // Calculate distance
+        const fromStation = fromSelect.value;
+        const toStation = toSelect.value;
+        const passengerName = nameInput.value.trim();
+        const passengerCount = parseInt(countInput.value, 10);
+
+        const distance =
+          Math.abs(stations[fromStation] - stations[toStation]) || 0;
+
+        const totalFare = distance * FARE_PER_KM * passengerCount;
+
+        // Date and time
+        const now = new Date();
+        const dateStr = now.toLocaleDateString();
+        const timeStr = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Update ticket info
+        ticketFrom.textContent = fromStation.replace(/_/g, " ");
+        ticketTo.textContent = toStation.replace(/_/g, " ");
+        distanceKmSpan.textContent = distance;
+        fareAmount.textContent = `₹${totalFare.toFixed(2)}`;
+        ticketName.textContent = passengerName;
+        ticketCount.textContent = `${passengerCount} passenger(s)`;
+        ticketDate.textContent = dateStr;
+        ticketTime.textContent = timeStr;
+        ticketMeta.textContent = `Paid with ${paymentSelect.options[paymentSelect.selectedIndex].text}`;
+
+        // Generate QR code data string
+        const qrData = `Name: ${passengerName}\nFrom: ${fromStation.replace(
+          /_/g,
+          " "
+        )}\nTo: ${toStation.replace(/_/g, " ")}\nPassengers: ${passengerCount}\nFare: ₹${totalFare.toFixed(
+          2
+        )}\nDate: ${dateStr}\nTime: ${timeStr}`;
+
+        // Clear previous QR
+        qrcodeDiv.innerHTML = "";
+
+        // Generate QR code as an image inside the div
+        QRCode.toDataURL(qrData, { width: 200, margin: 1 })
+          .then((url) => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "QR Code";
+            qrcodeDiv.appendChild(img);
+          })
+          .catch((error) => {
+            console.error("QR Code generation error:", error);
+          });
+
+        detailsForm.classList.add("hidden");
+        ticketAside.classList.remove("hidden");
+      });
+
+      downloadBtn.addEventListener("click", () => {
+        const ticketCard = document.getElementById("ticketCard");
+        if (!ticketCard) {
+          alert("No ticket to download!");
+          return;
+        }
+        // Use html2canvas to capture the ticket card div
+        html2canvas(ticketCard).then((canvas) => {
+          // Create a link and trigger download
+          const link = document.createElement("a");
+          link.download = "kochi-metro-ticket.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+        });
+      });
+      //
+      //
+      //
+      //
+      //
+      //
+      <!-- ...everything remains exactly the same above ... -->
+
+      calcBtn.addEventListener("click", () => {
+        // Validate details
+        const email = emailInput.value.trim();
+        const phone = phoneInput.value.trim();
+
+        if (!email) {
+          alert("Please enter your email.");
+          return;
+        }
+        if (!phone || !/^\d{10}$/.test(phone)) {
+          alert("Please enter a valid 10-digit phone number.");
+          return;
+        }
+
+        // Calculate distance
+        const fromStation = fromSelect.value;
+        const toStation = toSelect.value;
+        const passengerName = nameInput.value.trim();
+        const passengerCount = parseInt(countInput.value, 10);
+
+        const distance =
+          Math.abs(stations[fromStation] - stations[toStation]) || 0;
+
+        const totalFare = distance * FARE_PER_KM * passengerCount;
+
+        // Date and time
+        const now = new Date();
+        const dateStr = now.toLocaleDateString();
+        const timeStr = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+
+        // Update ticket info
+        ticketFrom.textContent = fromStation.replace(/_/g, " ");
+        ticketTo.textContent = toStation.replace(/_/g, " ");
+        distanceKmSpan.textContent = distance;
+        fareAmount.textContent = `₹${totalFare.toFixed(2)}`;
+        ticketName.textContent = passengerName;
+        ticketCount.textContent = `${passengerCount} passenger(s)`;
+        ticketDate.textContent = dateStr;
+        ticketTime.textContent = timeStr;
+        ticketMeta.textContent = `Paid with ${paymentSelect.options[paymentSelect.selectedIndex].text}`;
+
+        // Generate QR code data string
+        const qrData = `Name: ${passengerName}\nFrom: ${fromStation.replace(
+          /_/g,
+          " "
+        )}\nTo: ${toStation.replace(/_/g, " ")}\nPassengers: ${passengerCount}\nFare: ₹${totalFare.toFixed(
+          2
+        )}\nDate: ${dateStr}\nTime: ${timeStr}`;
+
+        // Clear previous QR
+        qrcodeDiv.innerHTML = "";
+
+        // Generate QR code as an image inside the div
+        QRCode.toDataURL(qrData, { width: 200, margin: 1 })
+          .then((url) => {
+            const img = document.createElement("img");
+            img.src = url;
+            img.alt = "QR Code";
+            qrcodeDiv.appendChild(img);
+          })
+          .catch((error) => {
+            console.error("QR Code generation error:", error);
+          });
+
+        // ✅ Save ticket to localStorage for admin report
+        const ticketInfo = {
+          name: passengerName,
+          from: fromStation,
+          to: toStation,
+          fare: totalFare,
+          date: dateStr
+        };
+
+        const savedTickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+        savedTickets.push(ticketInfo);
+        localStorage.setItem("tickets", JSON.stringify(savedTickets));
+
+        // Show ticket section
+        detailsForm.classList.add("hidden");
+        ticketAside.classList.remove("hidden");
+      });
+
+//<!-- ...rest of your original code continues unchanged... -->
+
+    </script>
+  </body>
+</html>

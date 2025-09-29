@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add Staff - Kochi Metro</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    /* small local styles to make the form centered like a login card */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+    .card h2 { color: #2563eb; margin: 0 0 18px; text-align: center; }
+    .form-group { margin-bottom: 12px; }
+    label { display:block; font-weight:600; margin-bottom:6px; font-size:14px; }
+    input[type="text"], select {
+      width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px;
+    }
+    .actions { display:flex; gap:8px; margin-top:14px; }
+    .btn { flex:1; padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600; text-align:center; }
+    .btn-primary { background:#2563eb; color:white; }
+    .btn-secondary { background:#6b7280; color:white; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+    .small-note { font-size:13px; color:#6b7280; text-align:center; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="add-staff-title">
+    <h2 id="add-staff-title"><i class="fas fa-user-plus"></i> Add Staff Member</h2>
+
+    <form id="addStaffForm" autocomplete="off">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required placeholder="e.g. Rajesh Kumar" />
+      </div>
+
+      <div class="form-group">
+        <label for="department">Department</label>
+        <input id="department" name="department" type="text" required placeholder="e.g. Train Operations" />
+      </div>
+
+      <div class="form-group">
+        <label for="employeeId">Employee ID</label>
+        <input id="employeeId" name="employeeId" type="text" required placeholder="e.g. EMP009" />
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i>&nbsp; Save Staff
+        </button>
+
+        <a href="staff-management.html" class="btn btn-secondary" role="button">
+          <i class="fas fa-times"></i>&nbsp; Cancel
+        </a>
+      </div>
+
+      <div class="small-note">After saving you will be redirected back to the staff list.</div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('addStaffForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const newStaff = {
+        id: Date.now(), // unique internal id
+        name: document.getElementById('name').value.trim(),
+        department: document.getElementById('department').value.trim(),
+        employeeId: document.getElementById('employeeId').value.trim(),
+        status: 'On Duty' // default; you can add a select if you want
+      };
+
+      const KEY = 'kochi_staff';
+      const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+      // Optional: prevent duplicate employeeId
+      const exists = saved.some(s => s.employeeId && s.employeeId.toLowerCase() === newStaff.employeeId.toLowerCase());
+      if (exists) {
+        alert('Employee ID already exists. Change the ID or edit the existing record from staff list.');
+        return;
+      }
+
+      saved.push(newStaff);
+      localStorage.setItem(KEY, JSON.stringify(saved));
+
+      // Redirect back to staff page
+      window.location.href = 'staff-management.html';
+    });
+  </script>
+</body>
+</html>

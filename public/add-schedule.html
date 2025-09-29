@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Add Schedule - Kochi Metro</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <style>
+    /* small local styles to make the form centered like a login card */
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+    .card h2 { color: #2563eb; margin: 0 0 18px; text-align: center; }
+    .form-group { margin-bottom: 12px; }
+    label { display:block; font-weight:600; margin-bottom:6px; font-size:14px; }
+    input[type="text"], input[type="time"], select {
+      width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px;
+    }
+    .actions { display:flex; gap:8px; margin-top:14px; }
+    .btn { flex:1; padding:10px 12px; border-radius:8px; border:none; cursor:pointer; font-weight:600; }
+    .btn-primary { background:#2563eb; color:white; }
+    .btn-secondary { background:#6b7280; color:white; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; }
+    .small-note { font-size:13px; color:#6b7280; text-align:center; margin-top:8px; }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-labelledby="add-schedule-title">
+    <h2 id="add-schedule-title"><i class="fas fa-calendar-plus"></i> Add Train Schedule</h2>
+
+    <form id="addScheduleForm" autocomplete="off">
+      <div class="form-group">
+        <label for="trainId">Train ID</label>
+        <input id="trainId" name="trainId" type="text" required placeholder="e.g. K107" />
+      </div>
+
+      <div class="form-group">
+        <label for="route">Route</label>
+        <input id="route" name="route" type="text" required placeholder="e.g. Aluva - Tripunithura" />
+      </div>
+
+      <div class="form-group">
+        <label for="departure">Departure (time)</label>
+        <input id="departure" name="departure" type="time" required />
+      </div>
+
+      <div class="form-group">
+        <label for="arrival">Arrival (time)</label>
+        <input id="arrival" name="arrival" type="time" required />
+      </div>
+
+      <div class="form-group">
+        <label for="driver">Driver</label>
+        <input id="driver" name="driver" type="text" required placeholder="Driver name" />
+      </div>
+
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+          <option value="Operational">Operational</option>
+          <option value="Delayed">Delayed</option>
+          <option value="Maintenance">Maintenance</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i>&nbsp; Save Schedule
+        </button>
+
+        <a href="schedule-management.html" class="btn btn-secondary" role="button">
+          <i class="fas fa-times"></i>&nbsp; Cancel
+        </a>
+      </div>
+
+      <div class="small-note">After saving you will be redirected back to the schedule list.</div>
+    </form>
+  </div>
+
+  <script>
+    // Helper: format 24h "HH:MM" -> "hh:MM AM/PM"
+    function formatTimeTo12h(t) {
+      if (!t) return "-";
+      const parts = t.split(':');
+      if (parts.length < 2) return t;
+      let hr = parseInt(parts[0], 10);
+      const min = parts[1].slice(0,2);
+      const ampm = hr >= 12 ? 'PM' : 'AM';
+      hr = hr % 12 || 12;
+      return String(hr).padStart(2,'0') + ':' + min + ' ' + ampm;
+    }
+
+    document.getElementById('addScheduleForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const schedule = {
+        id: Date.now(), // unique id
+        trainId: document.getElementById('trainId').value.trim(),
+        route: document.getElementById('route').value.trim(),
+        departure: document.getElementById('departure').value,
+        arrival: document.getElementById('arrival').value,
+        driver: document.getElementById('driver').value.trim(),
+        status: document.getElementById('status').value
+      };
+
+      // load existing
+      const KEY = 'kochi_schedules';
+      const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+
+      // push and save
+      saved.push(schedule);
+      localStorage.setItem(KEY, JSON.stringify(saved));
+
+      // Redirect back to schedule page
+      window.location.href = 'schedule-management.html';
+    });
+  </script>
+</body>
+</html>

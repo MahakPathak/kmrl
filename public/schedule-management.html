@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Schedule Management - Kochi Metro Rail Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <meta name="theme-color" content="#2563eb" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container header-container">
+        <!-- Desktop Navigation -->
+        <nav class="header-nav">
+          <a href="index.html" class="nav-item active" data-tab="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <div class="nav-dropdown">
+            <button class="nav-item dropdown-toggle" aria-expanded="false">
+              <i class="fas fa-cogs"></i>
+              <span>Operations</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="nav-dropdown-content">
+              <a href="train-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-train"></i>
+                <span>Train Operations</span>
+              </a>
+              <a href="verify-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Verify Operations</span>
+              </a>
+            </div>
+          </div>
+          <a href="https://operation1.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Management</span>
+          </a>
+        
+          
+          <a href="staff-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Staff</span>
+          </a>
+
+          <a href="schedule-management.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+          </a>
+
+          <a href="live-map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Live Map</span>
+          </a>
+
+          <a href="reports1.html" class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="https://multitrack-j5ni.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Multitrack</span>
+          </a>
+
+          <a href="finance-department.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Finance</span>
+          </a>
+          
+        </nav>
+
+        <!-- Header Right Controls -->
+        <div class="header-right">
+          <!-- Theme Toggle -->
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            aria-label="Toggle theme"
+          >
+            <i class="fas fa-sun theme-icon" id="theme-icon"></i>
+          </button>
+
+          <!-- Notifications -->
+          <div class="notification-container">
+            <button
+              class="notification-btn"
+              id="notification-btn"
+              aria-expanded="false"
+            >
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge">3</span>
+            </button>
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <h3>Notifications</h3>
+                <span class="notification-count">3 new</span>
+              </div>
+              <div class="notification-list">
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i
+                      class="fas fa-exclamation-triangle"
+                      style="color: #f59e0b"
+                    ></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">Train Delay Alert</div>
+                    <div class="notification-text">
+                      Train K101 delayed by 5 minutes
+                    </div>
+                    <div class="notification-time">2 minutes ago</div>
+                  </div>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i class="fas fa-info-circle" style="color: #3b82f6"></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">System Update</div>
+                    <div class="notification-text">
+                      Scheduled maintenance at 2:00 AM
+                    </div>
+                    <div class="notification-time">1 hour ago</div>
+                  </div>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i class="fas fa-check-circle" style="color: #10b981"></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">Verification Complete</div>
+                    <div class="notification-text">
+                      All morning operations verified
+                    </div>
+                    <div class="notification-time">3 hours ago</div>
+                  </div>
+                </div>
+              </div>
+              <div class="notification-footer">
+                <button class="view-all-notifications">
+                  View All Notifications
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="profile-container">
+            <button class="profile-btn" id="profile-btn" aria-expanded="false">
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop&crop=face"
+                alt="Profile"
+                class="profile-avatar"
+              />
+              <span class="profile-name">Admin User</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <div class="profile-info">
+                <img
+                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=96&h=96&fit=crop&crop=face"
+                  alt="Profile"
+                  class="profile-avatar-large"
+                />
+                <div class="profile-details">
+                  <h4>Admin User</h4>
+                  <p>System Administrator</p>
+                </div>
+              </div>
+              <div class="profile-menu">
+                <button class="profile-menu-item" id="profile-settings">
+                  <i class="fas fa-user-cog"></i>
+                  <span>Profile Settings</span>
+                </button>
+                <button class="profile-menu-item" id="change-password">
+                  <i class="fas fa-key"></i>
+                  <span>Change Password</span>
+                </button>
+                <button class="profile-menu-item" id="preferences">
+                  <i class="fas fa-cog"></i>
+                  <span>Preferences</span>
+                </button>
+                <div class="profile-menu-divider"></div>
+                <button class="profile-menu-item logout" id="logout-btn">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Toggle -->
+          <button
+            class="mobile-menu-toggle"
+            id="mobile-menu-toggle"
+            aria-expanded="false"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav class="mobile-nav" id="mobile-nav">
+        <a href="index.html" class="mobile-nav-item">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="train-operations.html" class="mobile-nav-item">
+          <i class="fas fa-train"></i>
+          <span>Train Operations</span>
+        </a>
+        <a href="verify-operations.html" class="mobile-nav-item">
+          <i class="fas fa-check-circle"></i>
+          <span>Verify Operations</span>
+        </a>
+        <a href="staff-management.html" class="mobile-nav-item">
+          <i class="fas fa-users"></i>
+          <span>Staff Management</span>
+        </a>
+        <a href="schedule-management.html" class="mobile-nav-item active">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Schedule Management</span>
+        </a>
+        <a href="live-map.html" class="mobile-nav-item">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>Live Map</span>
+        </a>
+        <a href="reports.html" class="mobile-nav-item">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reports</span>
+        </a>
+        <div class="mobile-nav-divider"></div>
+        <button class="mobile-nav-item" id="mobile-profile-settings">
+          <i class="fas fa-user-cog"></i>
+          <span>Profile Settings</span>
+        </button>
+        <button class="mobile-nav-item logout" id="mobile-logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h1>Schedule Management</h1>
+            <p>Manage train schedules and timetables</p>
+          </div>
+          <div class="page-actions">
+           <a href="add-schedule.html" class="btn btn-primary">
+  <i class="fas fa-plus"></i>
+  Add Schedule
+</a>
+
+            <button class="btn btn-secondary">
+              <i class="fas fa-download"></i>
+              Export Schedule
+            </button>
+          </div>
+        </div>
+
+        <!-- Schedule Container -->
+        <div class="schedule-container">
+          <div class="schedule-header">
+            <h3>Today's Train Schedule</h3>
+          </div>
+          <div class="schedule-table-container">
+            <table class="schedule-table">
+              <thead>
+                <tr>
+                  <th>Train ID</th>
+                  <th>Route</th>
+                  <th>Departure</th>
+                  <th>Arrival</th>
+                  <th>Driver</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td data-label="Train ID">K101</td>
+                  <td data-label="Route">Aluva - Tripunithura</td>
+                  <td data-label="Departure">06:00 AM</td>
+                  <td data-label="Arrival">06:45 AM</td>
+                  <td data-label="Driver">Rajesh Kumar</td>
+                  <td data-label="Status">
+                    <span class="status-badge operational">Operational</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-secondary">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Train ID">K102</td>
+                  <td data-label="Route">Tripunithura - Aluva</td>
+                  <td data-label="Departure">06:30 AM</td>
+                  <td data-label="Arrival">07:15 AM</td>
+                  <td data-label="Driver">Priya Nair</td>
+                  <td data-label="Status">
+                    <span class="status-badge delayed">Delayed</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-warning">Alert</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Train ID">K103</td>
+                  <td data-label="Route">Aluva - Tripunithura</td>
+                  <td data-label="Departure">07:00 AM</td>
+                  <td data-label="Arrival">07:45 AM</td>
+                  <td data-label="Driver">Suresh Babu</td>
+                  <td data-label="Status">
+                    <span class="status-badge operational">Operational</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-secondary">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Train ID">K104</td>
+                  <td data-label="Route">Maintenance</td>
+                  <td data-label="Departure">-</td>
+                  <td data-label="Arrival">-</td>
+                  <td data-label="Driver">-</td>
+                  <td data-label="Status">
+                    <span class="status-badge maintenance">Maintenance</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-secondary">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Train ID">K105</td>
+                  <td data-label="Route">Tripunithura - Aluva</td>
+                  <td data-label="Departure">07:30 AM</td>
+                  <td data-label="Arrival">08:15 AM</td>
+                  <td data-label="Driver">Meera Thomas</td>
+                  <td data-label="Status">
+                    <span class="status-badge operational">Operational</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-secondary">View</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td data-label="Train ID">K106</td>
+                  <td data-label="Route">Aluva - Tripunithura</td>
+                  <td data-label="Departure">08:00 AM</td>
+                  <td data-label="Arrival">08:45 AM</td>
+                  <td data-label="Driver">Ravi Menon</td>
+                  <td data-label="Status">
+                    <span class="status-badge operational">Operational</span>
+                  </td>
+                  <td data-label="Actions">
+                    <button class="btn btn-sm btn-primary">Edit</button>
+                    <button class="btn btn-sm btn-secondary">View</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="multipage-script.js"></script>
+    <script>
+  (function () {
+    const KEY = 'kochi_schedules';
+    const tbody = document.querySelector('.schedule-table tbody');
+
+    function formatTimeTo12h(t) {
+      if (!t) return '-';
+      const parts = t.split(':');
+      if (parts.length < 2) return t;
+      let hr = parseInt(parts[0], 10);
+      const min = parts[1].slice(0,2);
+      const ampm = hr >= 12 ? 'PM' : 'AM';
+      hr = hr % 12 || 12;
+      return String(hr).padStart(2,'0') + ':' + min + ' ' + ampm;
+    }
+
+    function statusClass(status) {
+      switch ((status || '').toLowerCase()) {
+        case 'delayed': return 'status-badge delayed';
+        case 'maintenance': return 'status-badge maintenance';
+        default: return 'status-badge operational';
+      }
+    }
+
+    function loadSavedSchedules() {
+      // remove previously appended saved rows (prevents duplicates if script runs twice)
+      document.querySelectorAll('tr[data-saved="true"]').forEach(r => r.remove());
+
+      const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+      if (!saved || !saved.length) return;
+
+      saved.forEach(s => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-saved', 'true');
+        tr.innerHTML = `
+          <td data-label="Train ID">${s.trainId}</td>
+          <td data-label="Route">${s.route}</td>
+          <td data-label="Departure">${formatTimeTo12h(s.departure)}</td>
+          <td data-label="Arrival">${formatTimeTo12h(s.arrival)}</td>
+          <td data-label="Driver">${s.driver}</td>
+          <td data-label="Status"><span class="${statusClass(s.status)}">${s.status}</span></td>
+          <td data-label="Actions">
+            <button class="btn btn-sm btn-primary">Edit</button>
+            <button class="btn btn-sm btn-secondary">View</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSavedSchedules);
+  })();
+</script>
+
+  </body>
+</html>

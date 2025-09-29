@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kochi Metro - User Dashboard</title>
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-hover: #1d4ed8;
+      --bg-light: #ffffff;
+      --bg-dark: #0f172a;
+      --surface-light: #f8fafc;
+      --surface-dark: #1e293b;
+      --text-light: #1e293b;
+      --text-dark: #f1f5f9;
+      --subtext-light: #64748b;
+      --subtext-dark: #cbd5e1;
+      --border-light: #e2e8f0;
+      --border-dark: #334155;
+    }
+
+    [data-theme="dark"] {
+      --bg: var(--bg-dark);
+      --surface: var(--surface-dark);
+      --text: var(--text-dark);
+      --subtext: var(--subtext-dark);
+      --border: var(--border-dark);
+    }
+
+    [data-theme="light"], body:not([data-theme]) {
+      --bg: var(--bg-light);
+      --surface: var(--surface-light);
+      --text: var(--text-light);
+      --subtext: var(--subtext-light);
+      --border: var(--border-light);
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      background: var(--blue);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-img {
+  height: 32px; /* or 24px for even smaller */
+  width: auto;
+}
+
+.logo-text {
+  font-size: 1rem; /* adjust as needed */
+  font-weight: 600;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 3rem; /* adjust overall size */
+}
+
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .welcome {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .welcome h1 {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome p {
+      color: var(--subtext);
+      font-size: 1rem;
+    }
+
+    .info-boxes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .info-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      transition: transform 0.2s;
+    }
+
+    .info-box:hover {
+      transform: translateY(-2px);
+      border-color: var(--blue);
+    }
+
+    .info-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: space-around;
+      margin-bottom: 2rem;
+    }
+
+    .stat {
+      flex: 1 1 150px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .stat:hover {
+      transform: scale(1.03);
+    }
+
+    .stat-number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      color: var(--subtext);
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: transform 0.2s ease, border 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--blue);
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--subtext);
+      margin-bottom: 1.25rem;
+    }
+
+    .card button {
+      background: var(--blue);
+      border: none;
+      color: #fff;
+      padding: 0.6rem 1.25rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      width: 100%;
+    }
+
+    .card button:hover {
+      background: var(--blue-hover);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: 0.85rem;
+      color: var(--subtext);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* New Features */
+    .rating-widget, .poll {
+      margin-top: 2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      text-align: center;
+    }
+
+    .rating-widget span {
+      font-size: 2rem;
+      cursor: pointer;
+    }
+
+    .poll form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      max-width: 400px;
+      margin: 1rem auto;
+    }
+
+    .poll button {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .poll button:hover {
+      background: var(--blue-hover);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+  <img src="logo1.jpg" alt="Logo" class="logo-img">
+  <span class="logo-text">Kochi Metro Railway Limited</span>
+</div>
+
+    <div class="header-controls">
+      <!-- Updated Theme Toggle -->
+      <button class="theme-toggle" onclick="toggleTheme()" id="theme-icon" title="Switch to dark mode">🌙</button>
+      <div>👤 User</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <h1>Welcome to Kochi Metro</h1>
+      <p>Your gateway to seamless urban transportation</p>
+    </section>
+
+    <!-- Info Boxes -->
+    <div class="info-boxes">
+      <div class="info-box">
+        <div class="info-title">Service Status</div>
+        All metro lines are running smoothly today.
+      </div>
+      <div class="info-box">
+        <div class="info-title">Next Train</div>
+        Train to Aluva departing in <b><span id="countdown">5:00</span></b>.
+      </div>
+      <div class="info-box">
+        <div class="info-title">Tip of the Day</div>
+        Use the Kochi1 Card for faster check-ins and discounts.
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">25</div>
+        <div class="stat-label">Stations</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">2</div>
+        <div class="stat-label">Operational Lines</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">120K+</div>
+        <div class="stat-label">Daily Passengers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">27.96 km</div>
+        <div class="stat-label">Total Route Length</div>
+      </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="grid">
+      <div class="card">
+        <div class="card-icon">🎫</div>
+        <h2>Book Ticket</h2>
+        <p>Purchase metro tickets instantly and travel hassle-free.</p>
+        <button onclick="window.location.href='ticket.html'" style="font-weight: bold; color: white;">
+                Book Now
+        </button>
+
+      </div>
+
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h2>Feedback</h2>
+        <p>Help us improve your metro experience with your feedback.</p>
+        <button onclick="window.location.href='feedback.html'" style="font-weight: bold;   color: white;">
+                Give Feedback
+        </button>
+      </div>
+    </div>
+
+    <!-- New Feature: Ride Rating -->
+    <section class="rating-widget">
+      <h2>Rate Your Ride 🚇</h2>
+      <div>
+        <span onclick="rate(1)">😠</span>
+        <span onclick="rate(2)">😐</span>
+        <span onclick="rate(3)">😊</span>
+        <span onclick="rate(4)">😄</span>
+        <span onclick="rate(5)">😍</span>
+      </div>
+      <p id="rating-response"></p>
+    </section>
+
+    <!-- New Feature: Feature Poll -->
+    <section class="poll">
+      <h2>What feature would you like next?</h2>
+      <form id="poll-form">
+        <label><input type="radio" name="feature" value="Real-time Train Map" /> Real-time Train Map</label>
+        <label><input type="radio" name="feature" value="Digital Kochi1 Card" /> Digital Kochi1 Card</label>
+        <label><input type="radio" name="feature" value="Mobile Ticketing" /> Mobile Ticketing</label>
+        <label><input type="radio" name="feature" value="More Discounts" /> More Discounts</label>
+        <button type="button" onclick="submitPoll()">Submit</button>
+      </form>
+      <p id="poll-result"></p>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2024 Kochi Metro Rail Corporation. All rights reserved.
+  </footer>
+
+  <script>
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.getElementById("theme-icon");
+      if (body.getAttribute("data-theme") === "dark") {
+        body.removeAttribute("data-theme");
+        icon.textContent = "🌙";
+        icon.title = "Switch to dark mode";
+        localStorage.setItem("theme", "light");
+      } else {
+        body.setAttribute("data-theme", "dark");
+        icon.textContent = "☀";
+        icon.title = "Switch to light mode";
+        localStorage.setItem("theme", "dark");
+      }
+    }
+
+    function loadTheme() {
+      const saved = localStorage.getItem("theme");
+      const icon = document.getElementById("theme-icon");
+      if (saved === "dark") {
+        document.body.setAttribute("data-theme", "dark");
+        icon.textContent = "☀";
+        icon.title = "Switch to light mode";
+      }
+    }
+
+    function navigateToBooking() {
+      console.log("Navigating to booking...");
+      // window.location.href = "booking.html";
+    }
+
+    function navigateToFeedback() {
+      console.log("Navigating to feedback...");
+      // window.location.href = "feedback.html";
+    }
+
+    function startCountdown(minutes) {
+      const countdown = document.getElementById("countdown");
+      let time = minutes * 60;
+      setInterval(() => {
+        const mins = Math.floor(time / 60);
+        const secs = time % 60;
+        countdown.textContent = `${mins}:${secs.toString().padStart(2, "0")}`;
+        time--;
+        if (time < 0) {
+          countdown.textContent = "Now";
+        }
+      }, 1000);
+    }
+
+    function rate(score) {
+      const response = document.getElementById("rating-response");
+      const messages = {
+        1: "Sorry to hear that. We'll improve!",
+        2: "Thanks for your feedback.",
+        3: "Glad you had a decent ride!",
+        4: "Awesome! 😊",
+        5: "You're the best! 🚇💙"
+      };
+      response.textContent = messages[score];
+    }
+
+    function submitPoll() {
+      const selected = document.querySelector('input[name="feature"]:checked');
+      const result = document.getElementById("poll-result");
+      if (selected) {
+        result.textContent = `You voted for: "${selected.value}". Thanks for your input!`;
+      } else {
+        result.textContent = "Please select an option before submitting.";
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadTheme();
+      startCountdown(5); // 5 minutes countdown
+    });
+  </script>
+</body>
+</html>

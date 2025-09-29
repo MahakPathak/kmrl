@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Department Portal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px #aaa;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      background-color: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+    }
+
+    h2,
+    h3 {
+      text-align: center;
+    }
+
+    #internalContentList,
+    #financeRevenueEntries {
+      margin-top: 15px;
+    }
+
+    .admin-report-block {
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container" id="mainMenu">
+    <h2>Select Department</h2>
+    <button onclick="handleDepartmentClick('revenue')">Revenue Department</button>
+    <button onclick="handleDepartmentClick('finance')">Finance Department</button>
+  </div>
+
+  <div class="container hidden" id="loginForm">
+    <h2>Demo Login</h2>
+    <button onclick="demoLogin()">Login as Demo User</button>
+  </div>
+
+  <!-- Revenue Dashboard -->
+  <div class="container hidden" id="revenueDashboard">
+    <h2>Revenue Dashboard</h2>
+
+    <input type="text" id="companyName" placeholder="Company Name" />
+    <input type="text" id="companyDesc" placeholder="Description" />
+    <input type="number" id="companyRupees" placeholder="Revenue (₹)" />
+
+    <button onclick="addRevenueEntry()">Add Revenue Entry</button>
+
+    <h3>Revenue Entries</h3>
+    <div id="internalContentList"></div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <!-- Finance Dashboard -->
+  <div class="container hidden" id="financeDashboard">
+    <h2>Finance Dashboard</h2>
+
+    <h3>Revenue Entries</h3>
+    <div id="financeRevenueEntries">
+      <!-- Populated dynamically -->
+    </div>
+
+    <h3>Admin Report</h3>
+    <div class="admin-report-block">
+      <button onclick="window.open('admin-report.html', '_blank')">Open Admin Report</button>
+    </div>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    const revenueEntriesKey = 'revenueEntries';
+
+    function handleDepartmentClick(dept) {
+      document.getElementById('mainMenu').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+      window.currentDept = dept;
+    }
+
+    function demoLogin() {
+      if (window.currentDept === 'revenue') {
+        showRevenueDashboard();
+      } else if (window.currentDept === 'finance') {
+        showFinanceDashboard();
+      }
+    }
+
+    function showRevenueDashboard() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('revenueDashboard').classList.remove('hidden');
+      loadRevenueEntries();
+    }
+
+    function addRevenueEntry() {
+      const company = document.getElementById('companyName').value.trim();
+      const desc = document.getElementById('companyDesc').value.trim();
+      const rupees = parseFloat(document.getElementById('companyRupees').value.trim());
+
+      if (company && desc && !isNaN(rupees)) {
+        // Also read ticket revenue from localStorage
+        const tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+        const ticketTotal = tickets.reduce((sum, t) => sum + parseFloat(t.fare), 0);
+
+        let entries = JSON.parse(localStorage.getItem(revenueEntriesKey)) || [];
+        entries.push({ company, desc, rupees, ticketRupees: ticketTotal });
+        localStorage.setItem(revenueEntriesKey, JSON.stringify(entries));
+
+        document.getElementById('companyName').value = '';
+        document.getElementById('companyDesc').value = '';
+        document.getElementById('companyRupees').value = '';
+
+        loadRevenueEntries();
+      } else {
+        alert('Please fill all fields correctly.');
+      }
+    }
+
+    function loadRevenueEntries() {
+      const list = document.getElementById('internalContentList');
+      list.innerHTML = '';
+      const entries = JSON.parse(localStorage.getItem(revenueEntriesKey)) || [];
+
+      if (entries.length === 0) {
+        list.innerHTML = '<p>No entries yet.</p>';
+        return;
+      }
+
+      entries.forEach((entry, index) => {
+        const div = document.createElement('div');
+        div.style.border = '1px solid #3498db';
+        div.style.padding = '10px';
+        div.style.marginBottom = '10px';
+        div.style.borderRadius = '8px';
+        div.style.background = '#eef6fb';
+
+        div.innerHTML = `
+          <p><strong>Entry #${index + 1}</strong></p>
+          <p><strong>Company:</strong> ${entry.company}</p>
+          <p><strong>Description:</strong> ${entry.desc}</p>
+          <p><strong>Revenue (₹):</strong> ₹${entry.rupees.toFixed(2)}</p>
+          <p><strong>Ticket Revenue (₹):</strong> ₹${entry.ticketRupees.toFixed(2)}</p>
+        `;
+
+        list.appendChild(div);
+      });
+    }
+
+    function showFinanceDashboard() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('financeDashboard').classList.remove('hidden');
+      loadFinanceRevenueEntries();
+    }
+
+    function loadFinanceRevenueEntries() {
+      const container = document.getElementById('financeRevenueEntries');
+      container.innerHTML = '';
+      const entries = JSON.parse(localStorage.getItem(revenueEntriesKey)) || [];
+
+      if (entries.length === 0) {
+        container.innerHTML = '<p>No revenue entries available.</p>';
+        return;
+      }
+
+      entries.forEach((entry, index) => {
+        const block = document.createElement('div');
+        block.style.border = '1px solid #3498db';
+        block.style.padding = '12px';
+        block.style.marginBottom = '10px';
+        block.style.borderRadius = '8px';
+        block.style.background = '#eef6fb';
+
+        block.innerHTML = `
+          <p><strong>Entry #${index + 1}</strong></p>
+          <p><strong>Company:</strong> ${entry.company}</p>
+          <p><strong>Description:</strong> ${entry.desc}</p>
+          <p><strong>Revenue (₹):</strong> ₹${entry.rupees.toFixed(2)}</p>
+        `;
+
+        container.appendChild(block);
+      });
+    }
+
+    function logout() {
+      document.getElementById('revenueDashboard').classList.add('hidden');
+      document.getElementById('financeDashboard').classList.add('hidden');
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('mainMenu').classList.remove('hidden');
+    }
+  </script>
+
+</body>
+
+</html>

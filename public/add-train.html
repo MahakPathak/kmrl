@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Add Train - Kochi Metro</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      /* simple form styles */
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f3f6fb;
+        display: flex; /* Re-add this */
+        align-items: center; /* Re-add this */
+        justify-content: center; /* Re-add this */
+        min-height: 100vh; /* Use min-height to be more flexible */
+        padding: 20px; /* Add padding for spacing on small screens */
+        box-sizing: border-box; /* Include padding in height calculation */
+      }
+      .card {
+        background: #fff;
+        padding: 24px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        width: 100%; /* Allow it to be responsive */
+        max-width: 420px; /* Set a maximum width */
+        margin: auto; /* This is the key to centering it perfectly */
+      }
+      h1 {
+        margin: 0 0 18px;
+        color: #1e40af;
+        font-size: 20px;
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+        font-weight: 600;
+        font-size: 13px;
+        color: #1f2937;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px 12px;
+        margin-top: 6px;
+        border-radius: 6px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row > div {
+        flex: 1;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 16px;
+      }
+      button {
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+        color: #111827;
+      }
+      .small-note {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #475569;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1><i class="fas fa-train"></i> Add New Train</h1>
+
+      <form id="trainForm" autocomplete="off">
+        <label for="trainName">Train Name</label>
+        <input
+          id="trainName"
+          type="text"
+          placeholder="E.g. K-Turbo 101"
+          required
+        />
+
+        <label for="trainRoute">Train Route</label>
+        <input
+          id="trainRoute"
+          type="text"
+          placeholder="E.g. Aluva - Tripunithura"
+          required
+        />
+
+        <div class="row">
+          <div>
+            <label for="driverName">Driver Name</label>
+            <input
+              id="driverName"
+              type="text"
+              placeholder="Driver name"
+              required
+            />
+          </div>
+          <div>
+            <label for="nextStation">Next Station</label>
+            <input
+              id="nextStation"
+              type="text"
+              placeholder="Next station"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="fitness">Fitness</label>
+            <input
+              id="fitness"
+              type="text"
+              placeholder="Fitness status (OK / Not OK)"
+              required
+            />
+          </div>
+          <div>
+            <label for="jobCard">Job Card</label>
+            <input
+              id="jobCard"
+              type="text"
+              placeholder="Job card status"
+              required
+            />
+          </div>
+        </div>
+
+        <label for="branding">Branding</label>
+        <input id="branding" type="text" placeholder="Branding details" />
+
+        <div class="row">
+          <div>
+            <label for="mileage">Mileage</label>
+            <input id="mileage" type="text" placeholder="e.g. 1,25,000 km" />
+          </div>
+          <div>
+            <label for="cleaningDue">Cleaning Due</label>
+            <input
+              id="cleaningDue"
+              type="text"
+              placeholder="e.g. 2025-10-05 or 'Today'"
+            />
+          </div>
+        </div>
+
+        <label for="bayPosition">Bay Position</label>
+        <input
+          id="bayPosition"
+          type="text"
+          placeholder="Depot / Bay position"
+        />
+
+        <label for="trainStatus">Status</label>
+        <select id="trainStatus" required>
+          <option value="">Select status</option>
+          <option value="active">Active</option>
+          <option value="delayed">Delayed</option>
+          <option value="maintenance">Maintenance</option>
+        </select>
+
+        <div class="actions">
+          <button type="button" class="btn-secondary" id="backBtn">Back</button>
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-plus"></i> Add Train
+          </button>
+        </div>
+
+        <div class="small-note">
+          Tip: All fields marked required must be filled.
+        </div>
+      </form>
+    </div>
+
+    <script>
+      (function () {
+        const form = document.getElementById("trainForm");
+        const backBtn = document.getElementById("backBtn");
+
+        backBtn.addEventListener("click", () => {
+          // go back to operations page
+          window.location.href = "train-operations.html";
+        });
+
+        function uid() {
+          // unique id using timestamp
+          return "K" + Date.now().toString().slice(-6);
+        }
+
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+
+          const train = {
+            id: uid(),
+            name: document.getElementById("trainName").value.trim(),
+            route: document.getElementById("trainRoute").value.trim(),
+            driver: document.getElementById("driverName").value.trim(),
+            nextStation: document.getElementById("nextStation").value.trim(),
+            fitness: document.getElementById("fitness").value.trim(),
+            jobCard: document.getElementById("jobCard").value.trim(),
+            branding: document.getElementById("branding").value.trim(),
+            mileage: document.getElementById("mileage").value.trim(),
+            cleaningDue: document.getElementById("cleaningDue").value.trim(),
+            bayPosition: document.getElementById("bayPosition").value.trim(),
+            status: document.getElementById("trainStatus").value,
+            createdAt: new Date().toISOString(),
+          };
+
+          // simple validation
+          if (
+            !train.name ||
+            !train.route ||
+            !train.driver ||
+            !train.nextStation ||
+            !train.status
+          ) {
+            alert("Please fill the required fields.");
+            return;
+          }
+
+          const KEY = "kmrl_trains";
+          const trains = JSON.parse(localStorage.getItem(KEY) || "[]");
+          trains.push(train);
+          localStorage.setItem(KEY, JSON.stringify(trains));
+
+          // redirect to operations page and pass the newly added ID to highlight the card
+          window.location.href =
+            "train-operations.html?added=" + encodeURIComponent(train.id);
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,247 @@
+<!doctype html> 
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kochi Metro — Feedback Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f3f6fb; --card:#fff; --accent:#0b63d6; --muted:#6b7280; --shadow: 0 8px 20px rgba(11,99,214,0.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background:linear-gradient(180deg,#e9f0ff 0%,var(--bg) 60%);
+      margin:0;
+      padding:32px 0;
+      color:#0f1724;
+      text-align:center;
+    }
+    .wrap{
+      max-width:700px;
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:24px;
+    }
+    header{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+    }
+    .logo{
+      background:var(--card);
+      padding:10px 14px;
+      border-radius:10px;
+      box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .logo h1{font-size:16px;margin:0;color:var(--accent)}
+    .welcome{
+      font-weight:600;
+      color:var(--muted);
+      font-size:14px;
+    }
+    .panel{
+      background:linear-gradient(180deg,rgba(255,255,255,0.9),var(--card));
+      padding:18px;
+      border-radius:12px;
+      box-shadow:var(--shadow);
+      width:100%;
+      max-width:500px;
+      text-align:left;
+    }
+    h2{margin:0 0 12px 0}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    select, input[type="text"], input[type="email"], input[type="datetime-local"], textarea{
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6eefb;background:transparent;font-size:14px;
+    }
+    textarea{resize:vertical;min-height:80px;}
+    .row{display:flex;gap:12px}
+    .row > *{flex:1}
+    button.primary{background:var(--accent);color:white;padding:10px 12px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    
+    .rating{
+      display:flex;
+      flex-direction:row-reverse;
+      justify-content:flex-end;
+      gap:8px;
+      margin:6px 0;
+    }
+    .rating input{display:none}
+    .rating label{
+      font-size:24px;
+      color:#d1d5db;
+      cursor:pointer;
+      transition: color 0.2s;
+    }
+    .rating label:hover,
+    .rating label:hover ~ label,
+    .rating input:checked ~ label{
+      color:var(--accent);
+    }
+
+    @media(max-width:600px){.row{flex-direction:column}}
+    .success-msg{background:rgba(11,99,214,0.1);padding:12px;border-radius:10px;color:var(--accent);display:none;text-align:center;margin-top:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#0B63D6"/><path d="M7 12h10M7 16h6" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <div>
+          <h1>Kochi Metro</h1>
+          <div style="font-size:12px;color:var(--muted)">We value your feedback</div>
+        </div>
+      </div>
+      <div class="welcome">Help us improve your journey experience</div>
+    </header>
+
+    <section class="panel">
+      <h2>Feedback Form</h2>
+      <form id="feedbackForm" style="display:grid;gap:12px">
+        <div class="row">
+          <div>
+            <label for="name">Name <span style="color:red">*</span></label>
+            <input id="name" name="name" type="text" placeholder="Your name" />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" />
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="phone">Phone <span style="color:red">*</span></label>
+            <input id="phone" name="phone" type="text" placeholder="10-digit number" />
+          </div>
+          <div>
+            <label for="from">From Station</label>
+            <select id="from" name="from"></select>
+          </div>
+        </div>
+
+        <div>
+          <label for="to">To Station</label>
+          <select id="to" name="to"></select>
+        </div>
+
+        <div>
+          <label for="journeyTime">Journey Date & Time</label>
+          <input id="journeyTime" name="journeyTime" type="datetime-local" readonly />
+        </div>
+
+        <div>
+          <label>Rating <span style="color:red">*</span></label>
+          <div class="rating">
+            <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
+            <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
+            <input type="radio" id="star3" name="rating" value="3"><label for="star3">★</label>
+            <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
+            <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
+          </div>
+        </div>
+
+        <div>
+          <label for="comments">Comments</label>
+          <textarea id="comments" name="comments" placeholder="Your comments..."></textarea>
+        </div>
+
+        <button id="submitBtn" class="primary" type="button">Submit Feedback</button>
+        <div class="success-msg" id="successMsg">Thank you for your feedback!</div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const STATIONS = [
+      'Aluva','Pulinchodu','Companypady','Ambattukavu','Muttom','Kalamassery','CUSAT','Pathadipalam','Edapally','Changampuzha Park',
+      'Palarivattom','JLN Stadium','Kaloor','Lissie','M.G. Road','Maharaja’s College','Ernakulam South','Kadavanthra','Elamkulam','Vyttila',
+      'Thykoodam','Pettah','Vadakkekotta','S.N. Junction','Tripunithura'
+    ];
+
+    const fromSelect = document.getElementById('from');
+    const toSelect = document.getElementById('to');
+
+    STATIONS.forEach(s=>{
+      fromSelect.add(new Option(s,s));
+      toSelect.add(new Option(s,s));
+    });
+
+    const journeyInput = document.getElementById('journeyTime');
+    function setCurrentDateTime() {
+      const now = new Date();
+      const pad = n => n.toString().padStart(2,'0');
+      journeyInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    }
+    setCurrentDateTime();
+
+    document.getElementById('submitBtn').addEventListener('click',()=>{
+      const form = document.getElementById('feedbackForm');
+
+      const name=form.name.value.trim();
+      const email=form.email.value.trim();
+      const phone=form.phone.value.trim();
+      const from=form.from.value;
+      const to=form.to.value;
+      const journeyTime=form.journeyTime.value;
+      const rating=form.querySelector('input[name="rating"]:checked')?.value;
+      const comments=form.comments.value.trim();
+
+      // Mandatory validations
+      if(!name){
+        alert('Name is required.');
+        form.name.focus();
+        return;
+      }
+
+      if(!phone){
+        alert('Phone number is required.');
+        form.phone.focus();
+        return;
+      }
+
+      if(!/^\d{10}$/.test(phone)){  // 10-digit phone validation
+        alert('Phone number must be 10 digits.');
+        form.phone.focus();
+        return;
+      }
+
+      if(email && !/^\S+@\S+\.\S+$/.test(email)){ // simple email format validation
+        alert('Please enter a valid email address.');
+        form.email.focus();
+        return;
+      }
+
+      if(!from || !to || from===to){
+        alert('Please select valid departure and destination stations.');
+        return;
+      }
+
+      if(!rating){
+        alert('Please provide a rating (1 to 5 stars).');
+        return;
+      }
+
+      const feedback={name,email,phone,from,to,journeyTime,rating,comments,date:new Date().toISOString()};
+      console.log('Feedback submitted:', feedback);
+
+      document.getElementById('successMsg').style.display='block';
+      setTimeout(()=>{document.getElementById('successMsg').style.display='none';},4000);
+
+      form.reset();           
+      setCurrentDateTime();   
+      form.querySelectorAll('input[name="rating"]').forEach(star => star.checked = false); 
+      form.name.focus();      
+    });
+  </script>
+</body>
+</html>

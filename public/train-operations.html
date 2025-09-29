@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Train Operations - Kochi Metro</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <meta name="theme-color" content="#2563eb" />
+</head>
+<body>
+    <header class="header">
+      <div class="container header-container">
+        <div class="logo">
+          <i class="fas fa-subway"></i>
+          <span class="logo-text">Kochi Metro</span>
+        </div>
+
+        <nav class="header-nav">
+          <a href="index.html" class="nav-item" data-tab="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <div class="nav-dropdown">
+            <button class="nav-item dropdown-toggle active" aria-expanded="false">
+              <i class="fas fa-cogs"></i>
+              <span>Operations</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="nav-dropdown-content">
+              <a href="train-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-train"></i>
+                <span>Train Operations</span>
+              </a>
+              <a href="verify-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Verify Operations</span>
+              </a>
+            </div>
+          </div>
+          <a href="https://operation1.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Management</span>
+          </a>
+          <a href="staff-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Staff</span>
+          </a>
+          <a href="schedule-management.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+          </a>
+          <a href="live-map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Live Map</span>
+          </a>
+          <a href="reports1.html" class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="https://multitrack-j5ni.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Multitrack</span>
+          </a>
+          <a href="finance-department.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Finance</span>
+          </a>
+        </nav>
+
+        <div class="header-right">
+            </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Train Operations</h1>
+                    <p>Monitor and manage all train operations</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="add-train-btn" onclick="location.href='add-train.html'">
+                        <i class="fas fa-plus"></i> Add Train
+                    </button>
+                    <button class="btn" id="clear-storage" title="Clear all saved trains">Clear saved trains</button>
+                </div>
+            </div>
+
+            <div class="operations-controls">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="active">Active</button>
+                    <button class="filter-btn" data-filter="delayed">Delayed</button>
+                    <button class="filter-btn" data-filter="maintenance">Maintenance</button>
+                </div>
+                <div class="search-container">
+                    <input id="train-search" class="search-input" placeholder="Search by id, name, route, driver..." />
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+            </div>
+
+            <div class="train-operations-list" id="trainList">
+                </div>
+        </div>
+    </main>
+
+ <script>
+(function() {
+    const KEY = 'kmrl_trains';
+    const trainList = document.getElementById('trainList');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('train-search');
+    const clearBtn = document.getElementById('clear-storage');
+
+    // Function to load and transform your specific CSV data
+    function initializeDefaultData() {
+        if (localStorage.getItem(KEY)) {
+            return;
+        }
+        const rawCsvData = `id,fitness,job_card_open,branding,mileage,cleaning_due,stabling_pos,route
+Train_01,1,0,Low,63986,0,10,Aluva-Pulinchodu
+Train_02,0,1,Medium,111858,0,7,Pulinchodu-Companypady
+Train_03,1,0,Low,179312,0,9,Companypady-Ambattukavu
+Train_04,0,0,Low,62666,1,7,Ambattukavu-Muttom
+Train_05,1,1,Medium,88660,0,1,Muttom-Kalamssery
+Train_06,1,1,Low,184633,1,1,Kalamssery-Cochin University
+Train_07,1,1,High,76854,1,9,Cochin University-Pathadipalam
+Train_08,1,1,High,114505,0,9,Pathadipalam-Edapally
+Train_09,1,0,High,154488,0,4,Edapally-Changampuzha Park
+Train_10,1,1,Medium,72662,1,9,Changampuzha Park-Palarivattom
+Train_11,1,0,Medium,58392,0,3,Palarivattom-JLN Stadium
+Train_12,0,1,High,80535,0,7,JLN Stadium-Kaloor
+Train_13,1,1,Low,163569,1,6,Kaloor-Town Hall
+Train_14,0,0,Medium,102256,0,8,Town Hall-M.G. Road
+Train_15,1,0,High,139135,0,9,M.G. Road-Maharaja's College
+Train_16,1,1,Medium,177478,0,5,Maharaja's College-Ernakulam South
+Train_17,1,1,High,85222,0,1,Ernakulam South-Kadavanthra
+Train_18,1,1,Low,127373,0,3,Kadavanthra-Elamkulam
+Train_19,1,1,High,173684,0,10,Elamkulam-Vyttila
+Train_20,1,0,Low,60965,0,8,Vyttila-Thaikoodam
+Train_21,1,1,Medium,74538,0,6,Thaikoodam-Petta
+Train_22,1,1,High,158066,0,8,Petta-Vadakkekotta
+Train_23,0,1,High,163252,0,9,Vadakkekotta-SN Junction
+Train_24,1,0,Low,189182,1,4,SN Junction-Thrippunithura
+Train_25,1,1,Medium,148806,0,1,Thrippunithura Depot`;
+
+        const lines = rawCsvData.trim().split('\n');
+        const headers = lines[0].split(',').map(h => h.trim());
+        const defaultTrains = lines.slice(1).map((line, index) => {
+            const values = line.split(',').map(v => v.trim());
+            const rawTrain = {};
+            headers.forEach((header, i) => { rawTrain[header] = values[i]; });
+
+            return {
+                id: rawTrain.id.replace('_', ''),
+                name: rawTrain.id.replace('_', ' '),
+                route: rawTrain.route,
+                driver: "Driver " + (index + 1),
+                nextStation: rawTrain.route.split('-')[1] || "Depot",
+                fitness: rawTrain.fitness === '1' ? 'OK' : 'Needs Check',
+                jobCard: rawTrain.job_card_open === '1' ? 'Open' : 'Closed',
+                branding: rawTrain.branding,
+                mileage: `${parseInt(rawTrain.mileage).toLocaleString()} km`,
+                cleaningDue: rawTrain.cleaning_due === '1' ? 'Today' : 'Tomorrow',
+                bayPosition: `Bay ${rawTrain.stabling_pos}`,
+                status: rawTrain.fitness === '1' ? 'active' : 'maintenance',
+                createdAt: new Date().toISOString()
+            };
+        });
+        localStorage.setItem(KEY, JSON.stringify(defaultTrains));
+    }
+
+    function getQueryParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+
+    function loadTrains() {
+        try {
+            return JSON.parse(localStorage.getItem(KEY) || '[]');
+        } catch (e) { return []; }
+    }
+
+    function timeAgo(iso) {
+        if (!iso) return 'Just now';
+        const t = Date.now() - new Date(iso).getTime();
+        const s = Math.floor(t / 1000);
+        if (s < 60) return `${s}s ago`;
+        const m = Math.floor(s / 60);
+        return `${m}m ago`;
+    }
+
+    function createCard(train) {
+        const card = document.createElement('div');
+        const statusColors = { active: 'border-green-500', delayed: 'border-yellow-500', maintenance: 'border-gray-500' };
+        card.className = `train-card ${statusColors[train.status] || 'border-gray-500'}`;
+        card.dataset.id = train.id;
+        card.innerHTML = `
+            <div class="card-header">
+                <div class="train-main-info"><span class="train-id">${train.id}</span><div class="train-name-route"><h3>${train.name}</h3><p>${train.route}</p></div></div>
+                <div class="status-badge status-${train.status}">${train.status}</div>
+            </div>
+            <div class="card-body"><div class="info-grid">
+                <div class="info-item"><span>Driver</span><strong>${train.driver}</strong></div>
+                <div class="info-item"><span>Next Station</span><strong>${train.nextStation}</strong></div>
+                <div class="info-item"><span>Mileage</span><strong>${train.mileage}</strong></div>
+                <div class="info-item"><span>Fitness</span><strong>${train.fitness}</strong></div>
+                <div class="info-item"><span>Job Card</span><strong>${train.jobCard}</strong></div>
+                <div class="info-item"><span>Cleaning Due</span><strong>${train.cleaningDue}</strong></div>
+            </div></div>
+            <div class="card-footer"><small>Added: ${timeAgo(train.createdAt)}</small><div class="card-actions"><button class="btn-sm">Track</button><button class="btn-sm">Contact</button></div></div>
+        `;
+        return card;
+    }
+
+    function render(filter = 'all', query = '') {
+        trainList.innerHTML = '';
+        const q = query.trim().toLowerCase();
+        const allTrains = loadTrains();
+        const list = allTrains.filter(t => {
+            if (filter !== 'all' && t.status !== filter) return false;
+            if (!q) return true;
+            return (Object.values(t).some(val => String(val).toLowerCase().includes(q)));
+        });
+
+        if (list.length === 0) {
+            const empty = document.createElement('div');
+            empty.style = 'padding:28px; text-align:center; color:#64748b; background:#fff; border-radius:10px;';
+            empty.innerHTML = 'No trains found for this filter.';
+            trainList.appendChild(empty);
+            return;
+        }
+
+        list.forEach(train => trainList.appendChild(createCard(train)));
+
+        const addedId = getQueryParam('added');
+        if (addedId) {
+            const newCard = document.querySelector(`.train-card[data-id="${addedId}"]`);
+            if (newCard) {
+                newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                newCard.classList.add('highlight');
+                setTimeout(() => newCard.classList.remove('highlight'), 3000);
+                const url = new URL(window.location.href);
+                url.searchParams.delete('added');
+                window.history.replaceState({}, '', url);
+            }
+        }
+    }
+
+    // --- Event Listeners ---
+    window.addEventListener('pageshow', () => {
+        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+        render(activeFilter, searchInput.value);
+    });
+
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            render(btn.dataset.filter, searchInput.value);
+        });
+    });
+
+    searchInput.addEventListener('input', () => {
+        const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+        render(activeFilter, searchInput.value);
+    });
+
+    clearBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all saved trains?')) {
+            localStorage.removeItem(KEY);
+            initializeDefaultData(); // Re-initialize with default data
+            render('all', '');
+        }
+    });
+
+    // --- Initial Call ---
+    initializeDefaultData();
+    render('all', '');
+
+})();
+</script>
+</body>
+</html>

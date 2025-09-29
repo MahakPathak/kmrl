@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kochi Metro - Live Map</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --surface: #ffffff;
+  --bg: #f9fafb;
+  --text: #1e293b;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Navbar */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--surface); 
+ padding: 0.75rem 1.5rem;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 1001; /* <-- Increased again to be higher than map controls */
+  border-bottom-left-radius: var(--radius);
+  border-bottom-right-radius: var(--radius);
+  transition: background 0.3s;
+  background-color:blue;
+  color: white;
+}
+
+.header-nav {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.header-nav a, .dropdown-toggle {
+  text-decoration: none;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  font-weight: 500;
+  transition: 0.3s;
+  background: transparent;
+}
+
+.header-nav a:hover, .header-nav a.active, .dropdown-toggle:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-content {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  min-width: 180px;
+  z-index: 10;
+  flex-direction: column;
+}
+
+.nav-dropdown-content a {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.nav-dropdown-content a:hover { background: var(--primary); color: #fff; }
+.nav-dropdown:hover .nav-dropdown-content { display: flex; }
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover { background: var(--primary-hover); }
+/* Corrected to only target top-level links */
+header .header-nav > a, 
+header .dropdown-toggle {
+  color: white; /* force navbar links to white */
+}
+
+/* Layout */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr 300px;
+  gap: 1rem;
+  padding: 1rem;
+  align-items: stretch;
+  margin-top: 80px; /* Space for navbar */
+}
+
+@media(max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; margin-top: 80px; }
+  .sidebar, .right-panel, #map { height: auto; }
+}
+
+.sidebar, .right-panel { 
+  background: var(--surface); 
+  border-radius: var(--radius); 
+  box-shadow: var(--shadow); 
+  padding: 1rem; 
+  height: 650px; 
+  overflow-y: auto;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar h2, .right-panel h2 { font-size: 1rem; margin-bottom: 0.75rem; }
+
+.station-list { max-height: 100%; overflow-y: auto; padding: 0; margin: 0; }
+.station-list ul { list-style: none; padding: 0; margin: 0; }
+
+.station-item {
+  padding: 0.5rem;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.station-item:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+#map { height: 650px; border-radius: var(--radius); box-shadow: var(--shadow); transition: background 0.3s; }
+
+.card { background: #f1f5f9; border-radius: var(--radius); padding: 0.75rem; margin-bottom: 0.75rem; transition: background 0.3s, color 0.3s; }
+.card h3 { margin: 0; font-size: 1rem; }
+.card span { font-weight: bold; color: var(--primary); }
+
+.station-label {
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #2563eb;
+  font-weight: bold;
+  border: 1px solid #2563eb;
+}
+
+/* Dark Mode */
+body.dark {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --surface: #1f2937;
+  --bg: #111827;
+  --text: #f3f4f6;
+  --shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+
+</style>
+</head>
+<body>
+<header>
+  <nav class="header-nav">
+          <a href="index.html" class="nav-item active" data-tab="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <div class="nav-dropdown">
+            <button class="nav-item dropdown-toggle" aria-expanded="false">
+              <i class="fas fa-cogs"></i>
+              <span>Operations</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="nav-dropdown-content">
+              <a href="train-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-train"></i>
+                <span>Train Operations</span>
+              </a>
+              <a href="verify-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Verify Operations</span>
+              </a>
+            </div>
+          </div>
+          <a href="https://operation1.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Management</span>
+          </a>
+        
+          
+          <a href="staff-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Staff</span>
+          </a>
+
+          <a href="schedule-management.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+          </a>
+
+          <a href="live-map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Live Map</span>
+          </a>
+
+          <a href="reports1.html" class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="https://multitrack-j5ni.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Multitrack</span>
+          </a>
+
+          <a href="finance-department.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Finance</span>
+          </a>
+          
+        </nav>
+  <div class="actions">
+    <button id="refreshBtn" class="btn-primary"><i class="fas fa-sync-alt"></i> Refresh</button>
+    <button id="themeBtn"><i class="fas fa-moon"></i></button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h2>Stations</h2>
+    <div class="station-list"><ul id="stationUL"></ul></div>
+  </aside>
+
+  <section id="map"></section>
+
+  <aside class="right-panel">
+    <h2>Live Status</h2>
+    <div class="card"><h3>Trains Running: <span>1</span></h3></div>
+    <div class="card"><h3>On-Time: <span>1</span></h3></div>
+    <div class="card"><h3>Delayed: <span>0</span></h3></div>
+    <div class="card"><h3>Active Staff: <span>48</span></h3></div>
+    <hr/>
+    <h2>Selected Station</h2>
+    <div id="stationDetails">Click a station to view details.</div>
+  </aside>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const stationData = [
+    { name: "Aluva", lat: 10.1114, lng: 76.3516 },
+    { name: "Pulinchodu", lat: 10.1018, lng: 76.3482 },
+    { name: "Companypady", lat: 10.0925, lng: 76.3450 },
+    { name: "Ambattukavu", lat: 10.0833, lng: 76.3395 },
+    { name: "Muttom", lat: 10.0734, lng: 76.3363 },
+    { name: "Kalamassery", lat: 10.0593, lng: 76.3260 },
+    { name: "Cochin University (CUSAT)", lat: 10.0486, lng: 76.3208 },
+    { name: "Pathadipalam", lat: 10.0375, lng: 76.3128 },
+    { name: "Edapally", lat: 10.0259, lng: 76.3087 },
+    { name: "Changampuzha Park", lat: 10.0160, lng: 76.3041 },
+    { name: "Palarivattom", lat: 10.0102, lng: 76.2999 },
+    { name: "JLN Stadium", lat: 9.9993, lng: 76.2986 },
+    { name: "Kaloor", lat: 9.9872, lng: 76.2952 },
+    { name: "Town Hall", lat: 9.9816, lng: 76.2906 },
+    { name: "M.G. Road", lat: 9.9762, lng: 76.2857 },
+    { name: "Maharaja's College", lat: 9.9698, lng: 76.2807 },
+    { name: "Ernakulam South", lat: 9.9574, lng: 76.2765 },
+    { name: "Kadavanthra", lat: 9.9507, lng: 76.2762 },
+    { name: "Elamkulam", lat: 9.9411, lng: 76.2760 },
+    { name: "Vyttila", lat: 9.9323, lng: 76.2800 },
+    { name: "Thaikoodam", lat: 9.9244, lng: 76.2953 },
+    { name: "Petta (Pettah)", lat: 9.9182, lng: 76.3025 },
+    { name: "Vadakkekotta", lat: 9.9170, lng: 76.3105 },
+    { name: "SN Junction", lat: 9.9160, lng: 76.3185 },
+    { name: "Tripunithura (Terminal)", lat: 9.9141, lng: 76.3262 }
+  ];
+
+  const map = L.map('map').setView([10.05, 76.35], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
+
+  const polyCoords = stationData.map(s => [s.lat, s.lng]);
+  L.polyline(polyCoords, { color: '#2563eb', weight: 4, opacity: 0.8 }).addTo(map);
+  const bounds = L.latLngBounds(polyCoords);
+
+  const stationUL = document.getElementById('stationUL');
+  const stationDetails = document.getElementById('stationDetails');
+  const markers = [];
+
+  function getDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  function getNextTrainTime(index) {
+    if(index === 0) return 2;
+    const prev = stationData[index - 1];
+    const curr = stationData[index];
+    const dist = getDistance(prev.lat, prev.lng, curr.lat, curr.lng);
+    const speed = 30; 
+    return Math.max(1, Math.round((dist / speed) * 60));
+  }
+
+  function showStationDetails(idx) {
+    const s = stationData[idx];
+    map.setView([s.lat, s.lng], 16, { animate: true });
+    markers[idx].openTooltip();
+    const nextTrain = getNextTrainTime(idx);
+    stationDetails.innerHTML = `
+      <h3>${s.name}</h3>
+      <p>Status: <span style="color:green;">Operational</span></p>
+      <p>Next Train: <strong>${nextTrain} min</strong></p>
+    `;
+  }
+
+  stationData.forEach((s, i) => {
+    const li = document.createElement('li');
+    li.className = 'station-item';
+    li.textContent = `${i+1}. ${s.name}`;
+    stationUL.appendChild(li);
+
+    const marker = L.circleMarker([s.lat, s.lng], {
+      radius: 6,
+      fillColor: '#2563eb',
+      color: '#000',
+      weight: 1,
+      opacity: 1,
+      fillOpacity: 1
+    }).addTo(map);
+
+    marker.bindTooltip(s.name, { permanent: true, direction: 'right', offset: [10, 0], className: 'station-label' });
+    markers.push(marker);
+
+    li.addEventListener('click', () => showStationDetails(i));
+  });
+
+  map.flyToBounds(bounds.pad(0.05));
+
+  // Dark/Light Mode Toggle
+  const themeBtn = document.getElementById('themeBtn');
+  themeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    themeBtn.innerHTML = document.body.classList.contains('dark') 
+      ? '<i class="fas fa-sun"></i>' 
+      : '<i class="fas fa-moon"></i>';
+  });
+
+  document.getElementById('refreshBtn').addEventListener('click', () => {
+    map.flyToBounds(bounds.pad(0.05), { duration: 1 });
+  });
+
+  // --- Train Icon Animation ---
+  const trainIcon = L.icon({
+    iconUrl: "data:image/png;base64,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",
+    iconSize: [25,25],
+    iconAnchor: [16,16]
+  });
+
+  const trainMarker = L.marker(polyCoords[0], { icon: trainIcon }).addTo(map);
+  let current = 0, forward = true, speed = 0.016;
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function moveTrainSmooth(){
+    let next = forward ? current+1 : current-1;
+    if(next >= polyCoords.length){ forward=false; next=current-1; }
+    if(next < 0){ forward=true; next=current+1; }
+    const [lat1,lng1] = polyCoords[current];
+    const [lat2,lng2] = polyCoords[next];
+    let t=0;
+    function animate(){
+      t+=speed;
+      if(t>1){ current=next; requestAnimationFrame(moveTrainSmooth); return; }
+      trainMarker.setLatLng([lerp(lat1,lat2,t), lerp(lng1,lng2,t)]);
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+  moveTrainSmooth();
+
+});
+</script>
+</body>
+</html>

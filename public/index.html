@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kochi Metro Rail Limited</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+<style>
+/* ===== Your Original Styles (unchanged) ===== */
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:"Poppins", sans-serif; line-height:1.6; color:#003366; scroll-behavior:smooth; background:#f2f5f7; }
+nav { display:flex; align-items:center; justify-content:space-between; padding:10px 20px; background:#003366; color:white; position:sticky; top:0; z-index:100; }
+nav .logo { display:flex; align-items:center; }
+nav .logo img { height:50px; margin-right:10px; }
+nav ul { list-style:none; display:flex; }
+nav ul li { margin:0 10px; }
+nav ul li a { color:white; text-decoration:none; font-weight:bold; transition:0.3s; }
+nav ul li a:hover { color:#00b4d8; }
+header { height:80vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:#cce6ff; position:relative; }
+header h1 { font-size:3rem; margin-bottom:20px; }
+header p { font-size:1.2rem; margin-bottom:10px; }
+header #heroQuote { font-style:italic; margin-bottom:20px; font-size:2.8rem; color:#003366; }
+.header-lang-btns { margin-bottom:20px; }
+.header-lang-btns button { margin:0 5px; padding:5px 10px; border:none; border-radius:5px; cursor:pointer; background:#0077b6; color:white; transition:0.3s; }
+.header-lang-btns button:hover { background:#3399ff; }
+
+/* ✅ Smaller rectangle box in hero */
+.content {
+  background: rgba(255, 255, 255, 0.3);
+  padding: 15px 20px;       /* reduced padding */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  backdrop-filter: blur(5px);
+  max-width: 50%;           /* narrower width */
+  margin: 0 auto;           /* center it */
+  height: auto;
+}
+
+.btn-group button { 
+  background:#0077b6; 
+  color:white; 
+  border:none; 
+  padding:15px 35px; 
+  margin:10px; 
+  font-weight:bold; 
+  border-radius:30px; 
+  cursor:pointer; 
+  transition:all 0.3s; 
+}
+.btn-group button:hover { background:#3399ff; }
+#hero{ background-image: url('front-img.jpg'); background-size: cover; background-position: center; }
+#why { padding:60px 20px; text-align:center; background:#e6f2ff; color:#003366; }
+#why h2 { font-size:2.5rem; margin-bottom:20px; }
+#why p { font-size:1.1rem; max-width:900px; margin:0 auto 40px auto; }
+#why .photos { display:flex; flex-wrap:wrap; justify-content:center; gap:20px; }
+#why .photos img { width:250px; height:150px; object-fit:cover; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.2); transition:0.3s; }
+#why .photos img:hover { transform:scale(1.05); }
+footer { background:#003366; color:white; text-align:center; padding:20px 10px; margin-top:20px; }
+footer a { color:#99ccff; }
+footer a:hover { text-decoration:underline; }
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:999; }
+.modal-content { background: rgba(255,255,255,0.95); color:#003366; width:400px; padding:25px; border-radius:20px; position:relative; animation: fadeIn 0.4s ease-in-out; box-shadow:0 4px 20px rgba(0,0,0,0.2); }
+.close { position:absolute; top:10px; right:15px; font-size:1.5rem; cursor:pointer; color:#003366; }
+.tabs { display:flex; justify-content:space-around; margin-bottom:15px; border-bottom:2px solid #cce6ff; }
+.tab { flex:1; text-align:center; padding:10px; cursor:pointer; font-weight:bold; transition:0.3s; }
+.tab.active { border-bottom:3px solid #0077b6; color:#0077b6; }
+.form { display:none; text-align:left; }
+.form.active { display:block; }
+input, select { width:100%; padding:12px; margin:8px 0; border:1px solid #cce6ff; border-radius:8px; outline:none; }
+.submit-btn { background:#0077b6; color:white; border:none; padding:12px; width:100%; border-radius:8px; cursor:pointer; font-weight:bold; transition:0.3s; }
+.submit-btn:hover { background:#3399ff; }
+.message { margin:5px 0; color:red; font-size:0.9em; }
+.message.success { color:green; }
+.cards-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
+.card { background: #fff; color: #003366; width: 250px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.card img { width: 100%; height: 150px; object-fit: cover; }
+.card h3 { margin: 12px; font-size: 1.2rem; }
+.card p { margin: 0 12px 12px 12px; font-size: 0.95rem; }
+.card:hover { transform: translateY(-5px) scale(1.03); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+.progress-container { width:100%; background:#eee; height:12px; border-radius:6px; margin:10px 0; }
+.progress-bar { width:100%; height:100%; background:#003366; border-radius:6px; transition: width 0.3s; }
+@keyframes fadeIn { from {opacity:0; transform:scale(0.8);} to {opacity:1; transform:scale(1);} }
+@media(max-width:768px){ nav ul { flex-direction:column; } #why .photos { flex-direction:column; align-items:center; } header h1 { font-size:2rem; } .modal-content { width:90%; } .content{ max-width:80%; } }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="logo">
+    <img src="logo1.jpg" alt="Logo"/>
+    <h1>Kochi Metro Rail Limited</h1>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<header id="hero">
+  <div class="content">
+     <p id="heroQuote"></p>
+    <h3>Connecting the city with speed, comfort and style</h3>
+    <div class="btn-group">
+      <button onclick="openModal('customer')"><i class="fas fa-user"></i> Customer Login</button>
+      <button onclick="openModal('admin')"><i class="fas fa-user-shield"></i> Admin Login</button>
+    </div>
+  </div>
+</header>
+
+<!-- Why Metro Section -->
+<section id="why">
+  <h2>Why Travel by Kochi Metro?</h2>
+  <p>Kochi Metro provides a fast, safe, and eco-friendly way to travel across the city. It reduces traffic congestion, saves time, and connects key business and tourist areas efficiently.</p>
+
+  <!-- Cards Container -->
+  <div class="cards-container">
+    <div class="card">
+      <img src="https://th.bing.com/th/id/OIP.1EnP2NLoG5i2OHL4VvbGuQHaE8?w=268&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Fast Travel">
+      <h3>Fast Travel</h3>
+      <p>Reach your destination quickly and efficiently, avoiding city traffic jams.</p>
+    </div>
+    <div class="card">
+      <img src="https://th.bing.com/th/id/OIP.UFfW9JNv2XjqFGXhcV492AHaEK?w=284&h=180&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Safe & Reliable">
+      <h3>Safe & Reliable</h3>
+      <p>Travel in a secure environment with state-of-the-art surveillance and facilities.</p>
+    </div>
+    <div class="card">
+      <img src="ecofriendly-img.jpg" alt="Eco-Friendly">
+      <h3>Eco-Friendly</h3>
+      <p>Reduce your carbon footprint by choosing a sustainable mode of transportation.</p>
+    </div>
+    <div class="card">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdKOyyDEjSgsPV5w-wOvZSgUH4-8enXFx1Og&s" alt="Convenient">
+      <h3>Convenient</h3>
+      <p>Well-connected stations and regular schedules make commuting hassle-free.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer id="contact">
+  <p>&copy; 2025 Kochi Metro Rail Limited</p>
+  <p>Follow us on 
+    <a href="#"><i class="fab fa-facebook"></i> Facebook</a> | 
+    <a href="#"><i class="fab fa-twitter"></i> Twitter</a> | 
+    <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+  </p>
+  <p>Email: info@kochimetro.org | Phone: +91 484 1234567</p>
+</footer>
+
+<!-- Login Modal -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle">Login</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('login')">Login</div>
+      <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form id="loginForm" class="form active">
+      <input type="text" id="loginUsername" placeholder="Username" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit" class="submit-btn">Login</button>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form id="signupForm" class="form">
+      <input type="text" id="signupUsername" placeholder="Username" required />
+      <input type="password" id="signupPassword" placeholder="Password" required />
+      <select id="signupRole">
+        <option value="customer">Customer</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button type="submit" class="submit-btn">Sign Up</button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ==== Quotes Rotation ==== */
+const quotes = [
+  "The Metro is the city’s pulse — fast, reliable, and clean.",
+  "Ride the Kochi Metro and beat the city traffic.",
+  "Comfort and speed in every ride — that’s Kochi Metro.",
+  "Travel smart. Travel green. Choose Kochi Metro.",
+  "Connecting communities, powering progress — Kochi Metro."
+];
+let quoteIndex = 0;
+function changeQuote() {
+  document.getElementById('heroQuote').textContent = quotes[quoteIndex];
+  quoteIndex = (quoteIndex + 1) % quotes.length;
+}
+changeQuote();
+setInterval(changeQuote, 8000);
+
+/* ==== Modal Controls ==== */
+let currentLoginType = "customer";
+function openModal(type) {
+  currentLoginType = type;
+  document.getElementById('loginModal').style.display = 'flex';
+  document.getElementById('modalTitle').textContent = type === 'admin' ? 'Admin Login' : 'Customer Login';
+  switchTab('login');
+}
+function closeModal() {
+  document.getElementById('loginModal').style.display = 'none';
+}
+function switchTab(tab) {
+  const loginForm = document.getElementById('loginForm');
+  const signupForm = document.getElementById('signupForm');
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  if(tab === 'login') {
+    loginForm.classList.add('active');
+    signupForm.classList.remove('active');
+    tabs[0].classList.add('active');
+  } else {
+    loginForm.classList.remove('active');
+    signupForm.classList.add('active');
+    tabs[1].classList.add('active');
+  }
+}
+
+/* ==== Backend Integration ==== */
+// ✅ Signup
+document.getElementById("signupForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("signupUsername").value;
+  const password = document.getElementById("signupPassword").value;
+  const role = document.getElementById("signupRole").value;
+
+  const res = await fetch("/api/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password, role })
+  });
+  const data = await res.json();
+  alert(data.message);
+  if (res.ok) switchTab("login");
+});
+
+// ✅ Login
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+
+  const res = await fetch("/api/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+  const data = await res.json();
+  alert(data.message);
+if (res.ok) {
+  localStorage.setItem("token", data.token);
+  localStorage.setItem("role", data.role);
+
+  if (data.role === "admin") {
+    window.location.href = "/dashboard";
+  } else {
+    window.location.href = "/userpage.html";
+  }
+}
+});
+</script>
+</body>
+</html>

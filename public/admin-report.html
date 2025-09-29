@@ -1,0 +1,105 @@
+<!-- admin-report.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kochi Metro — Admin Report</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f6fb;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #0b63d6;
+    }
+    .total {
+      text-align: center;
+      font-weight: bold;
+      font-size: 20px;
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px auto;
+      width: 300px;
+      box-shadow: 0 8px 20px rgba(11, 99, 214, 0.08);
+    }
+    table {
+      width: 90%;
+      margin: auto;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 8px 20px rgba(11, 99, 214, 0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background-color: #0b63d6;
+      color: white;
+    }
+    tr:hover {
+      background: #f1f5ff;
+    }
+    .note {
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Kochi Metro Admin Report</h1>
+  <div class="total" id="revenue">Total Revenue Today: ₹0</div>
+  <table>
+    <thead>
+      <tr>
+        <th>Passenger Name</th>
+        <th>Route</th>
+        <th>Fare (₹)</th>
+      </tr>
+    </thead>
+    <tbody id="reportBody">
+      <!-- Data populated by JS -->
+    </tbody>
+  </table>
+  <div class="note">* Shows tickets saved in this browser</div>
+
+  <script>
+    const tickets = JSON.parse(localStorage.getItem("tickets") || "[]");
+    const tbody = document.getElementById("reportBody");
+    const revenue = document.getElementById("revenue");
+
+    let total = 0;
+
+    tickets.forEach(t => {
+      const row = document.createElement("tr");
+
+      const td1 = document.createElement("td");
+      td1.textContent = t.name;
+
+      const td2 = document.createElement("td");
+      td2.textContent = `${t.from} → ${t.to}`;
+
+      const td3 = document.createElement("td");
+      td3.textContent = `₹${t.fare}`;
+
+      total += t.fare;
+
+      row.appendChild(td1);
+      row.appendChild(td2);
+      row.appendChild(td3);
+      tbody.appendChild(row);
+    });
+
+    revenue.textContent = `Total Revenue Today: ₹${total.toFixed(2)}`;
+  </script>
+</body>
+</html>

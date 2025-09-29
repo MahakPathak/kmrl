@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metro System Control Point Animation</title>
+  <style>
+    body {
+      background: #e6f0fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+    .scene-container {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .metro-area {
+      position: relative;
+      width: 900px;
+      height: 350px;
+      background: #cce0ff;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px #0002;
+      margin-bottom: 30px;
+    }
+    .train {
+      position: absolute;
+      bottom: 60px;
+      left: 80px;
+      width: 180px;
+      height: 60px;
+      background: linear-gradient(90deg, #3a3a3a 60%, #1e90ff 100%);
+      border-radius: 20px 40px 40px 20px;
+      box-shadow: 0 4px 12px #0003;
+      z-index: 2;
+      transition: left 1.5s cubic-bezier(.4,2,.6,1);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .train-window {
+      width: 40px;
+      height: 30px;
+      background: #e0f7fa;
+      border-radius: 8px;
+      margin-right: 18px;
+      border: 2px solid #b0c4de;
+    }
+    .train-door {
+      width: 30px;
+      height: 40px;
+      background: #b0c4de;
+      border-radius: 6px;
+      margin-right: 10px;
+      border: 2px solid #3a3a3a;
+    }
+    .train-wheel {
+      position: absolute;
+      bottom: -12px;
+      left: 30px;
+      width: 30px;
+      height: 18px;
+      background: #222;
+      border-radius: 50%;
+      box-shadow: 80px 0 #222;
+    }
+    .gate {
+      position: absolute;
+      left: 320px;
+      bottom: 60px;
+      width: 18px;
+      height: 80px;
+      background: #888;
+      border-radius: 6px;
+      z-index: 3;
+      transition: transform 1.2s cubic-bezier(.4,2,.6,1);
+      transform-origin: left bottom;
+    }
+    .track {
+      position: absolute;
+      left: 0;
+      bottom: 50px;
+      width: 100%;
+      height: 16px;
+      background: repeating-linear-gradient(90deg, #888 0 30px, #bbb 30px 40px);
+      border-radius: 8px;
+      z-index: 1;
+    }
+    .signal {
+      position: absolute;
+      left: 370px;
+      bottom: 120px;
+      width: 40px;
+      height: 120px;
+      background: #222;
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 4;
+      box-shadow: 0 2px 8px #0004;
+    }
+    .signal-light {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      margin: 8px 0;
+      background: #444;
+      border: 3px solid #111;
+      box-shadow: 0 0 8px #0006 inset;
+      opacity: 0.5;
+      transition: background 0.3s, opacity 0.3s, box-shadow 0.3s;
+    }
+    .signal-light.active {
+      opacity: 1;
+      box-shadow: 0 0 18px 4px currentColor, 0 0 8px #0006 inset;
+    }
+    .signal-light.red { background: #e53935; color: #e53935; }
+    .signal-light.yellow { background: #ffd600; color: #ffd600; }
+    .signal-light.green { background: #43a047; color: #43a047; }
+    .panels {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 10px;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px #0002;
+      padding: 18px 24px 12px 24px;
+      min-width: 170px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border: 2px solid #b0c4de;
+    }
+    .panel-title {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+      color: #1e90ff;
+      letter-spacing: 0.5px;
+    }
+    .panel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+      margin-bottom: 6px;
+    }
+    .panel-label {
+      font-size: 0.98em;
+      color: #333;
+      text-align: right;
+      padding-right: 6px;
+    }
+    .panel-status {
+      font-size: 1.5em;
+      text-align: left;
+      padding-left: 6px;
+      transition: color 0.3s;
+    }
+    .status-cross {
+      color: #e53935;
+    }
+    .status-check {
+      color: #43a047;
+    }
+    .overlay {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .overlay-text {
+      margin-top: 18px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 10px;
+      padding: 16px 32px;
+      font-size: 1.3em;
+      color: #1e293b;
+      font-weight: 500;
+      box-shadow: 0 2px 12px #0002;
+      pointer-events: auto;
+      text-align: center;
+      min-width: 420px;
+    }
+    .button-row {
+      margin-top: 18px;
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+    }
+    .action-btn {
+      background: #1e90ff;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 32px;
+      font-size: 1.1em;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0002;
+      transition: background 0.2s, transform 0.2s;
+      pointer-events: auto;
+    }
+    .action-btn:hover {
+      background: #1565c0;
+      transform: translateY(-2px) scale(1.04);
+    }
+  </style>
+</head>
+<body>
+  <div class="scene-container">
+    <div class="metro-area">
+      <div class="track"></div>
+      <div class="train" id="train">
+        <div class="train-door"></div>
+        <div class="train-window"></div>
+      </div>
+      <div class="train-wheel"></div>
+      <div class="gate" id="gate"></div>
+      <div class="signal">
+        <div class="signal-light red" id="light-red"></div>
+        <div class="signal-light yellow" id="light-yellow"></div>
+        <div class="signal-light green" id="light-green"></div>
+      </div>
+      <div class="overlay">
+        <div class="overlay-text" id="overlay-text"></div>
+      </div>
+    </div>
+    <div class="panels">
+      <div class="panel" id="panel-rolling">
+        <div class="panel-title">Rolling Department</div>
+        <div class="panel-grid">
+          <div class="panel-label">Major Problem</div>
+          <div class="panel-status" id="rolling-major"></div>
+          <div class="panel-label">Minor Problem</div>
+          <div class="panel-status" id="rolling-minor"></div>
+        </div>
+      </div>
+      <div class="panel" id="panel-signal">
+        <div class="panel-title">Signal Department</div>
+        <div class="panel-grid">
+          <div class="panel-label">Major Problem</div>
+          <div class="panel-status" id="signal-major"></div>
+          <div class="panel-label">Minor Problem</div>
+          <div class="panel-status" id="signal-minor"></div>
+        </div>
+      </div>
+      <div class="panel" id="panel-telecom">
+        <div class="panel-title">Telecommunication Department</div>
+        <div class="panel-grid">
+          <div class="panel-label">Major Problem</div>
+          <div class="panel-status" id="telecom-major"></div>
+          <div class="panel-label">Minor Problem</div>
+          <div class="panel-status" id="telecom-minor"></div>
+        </div>
+      </div>
+    </div>
+    <div class="button-row" id="button-row" style="display:none">
+      <button class="action-btn" id="btn-yes">YES</button>
+      <button class="action-btn" id="btn-no">NO</button>
+    </div>
+  </div>
+  <script>
+    // State definitions
+    const states = {
+      RED: 0,
+      YELLOW: 1,
+      YELLOW_INTERACT: 2,
+      GREEN: 3,
+      RED_REVERT: 4
+    };
+    let currentState = states.RED;
+    // Panel status: [major, minor] for each department
+    let panelStatus = {
+      rolling: [false, false],
+      signal: [false, false],
+      telecom: [false, false]
+    };
+    // DOM refs
+    const train = document.getElementById('train');
+    const gate = document.getElementById('gate');
+    const overlayText = document.getElementById('overlay-text');
+    const buttonRow = document.getElementById('button-row');
+    const btnYes = document.getElementById('btn-yes');
+    const btnNo = document.getElementById('btn-no');
+    // Panel status elements
+    const rollingMajor = document.getElementById('rolling-major');
+    const rollingMinor = document.getElementById('rolling-minor');
+    const signalMajor = document.getElementById('signal-major');
+    const signalMinor = document.getElementById('signal-minor');
+    const telecomMajor = document.getElementById('telecom-major');
+    const telecomMinor = document.getElementById('telecom-minor');
+    // Signal lights
+    const lightRed = document.getElementById('light-red');
+    const lightYellow = document.getElementById('light-yellow');
+    const lightGreen = document.getElementById('light-green');
+    // Helper for status icons
+    function statusIcon(checked) {
+      return checked
+        ? '<span class="status-check">&#10003;</span>'
+        : '<span class="status-cross">&#10007;</span>';
+    }
+    // Update all panels
+    function updatePanels() {
+      rollingMajor.innerHTML = statusIcon(panelStatus.rolling[0]);
+      rollingMinor.innerHTML = statusIcon(panelStatus.rolling[1]);
+      signalMajor.innerHTML = statusIcon(panelStatus.signal[0]);
+      signalMinor.innerHTML = statusIcon(panelStatus.signal[1]);
+      telecomMajor.innerHTML = statusIcon(panelStatus.telecom[0]);
+      telecomMinor.innerHTML = statusIcon(panelStatus.telecom[1]);
+    }
+    // Signal light control
+    let yellowBlinkInterval = null;
+    let greenBlinkTimeout = null;
+    function setSignal(red, yellow, green, yellowBlink = false, greenBlink = false) {
+      lightRed.classList.toggle('active', red);
+      lightYellow.classList.toggle('active', yellow);
+      lightGreen.classList.toggle('active', green);
+      // Blinking logic
+      if (yellowBlink) {
+        let on = true;
+        lightYellow.classList.add('active');
+        yellowBlinkInterval = setInterval(() => {
+          on = !on;
+          lightYellow.style.opacity = on ? '1' : '0.3';
+        }, 600);
+      } else {
+        clearInterval(yellowBlinkInterval);
+        yellowBlinkInterval = null;
+        lightYellow.style.opacity = yellow ? '1' : '0.5';
+      }
+      if (greenBlink) {
+        let on = true;
+        lightGreen.classList.add('active');
+        greenBlinkTimeout = setInterval(() => {
+          on = !on;
+          lightGreen.style.opacity = on ? '1' : '0.3';
+        }, 250);
+        setTimeout(() => {
+          clearInterval(greenBlinkTimeout);
+          lightGreen.style.opacity = '1';
+        }, 2000);
+      } else {
+        clearInterval(greenBlinkTimeout);
+        greenBlinkTimeout = null;
+        lightGreen.style.opacity = green ? '1' : '0.5';
+      }
+    }
+    // Gate control
+    function setGate(open) {
+      gate.style.transform = open ? 'rotate(-80deg)' : 'rotate(0deg)';
+    }
+    // Train control
+    function setTrainMoving(moving) {
+      train.style.left = moving ? '520px' : '80px';
+    }
+    // Overlay text
+    function setOverlay(text) {
+      overlayText.innerHTML = text;
+    }
+    // Button row
+    function showButtons(show) {
+      buttonRow.style.display = show ? 'flex' : 'none';
+    }
+    // Scene 1: Initial state (RED)
+    function sceneRed() {
+      currentState = states.RED;
+      panelStatus = {
+        rolling: [false, false],
+        signal: [false, false],
+        telecom: [false, false]
+      };
+      updatePanels();
+      setSignal(true, false, false);
+      setGate(false);
+      setTrainMoving(false);
+      setOverlay('CASE 3: RED LIGHT - No problems checked. Train cannot depart.');
+      showButtons(false);
+    }
+    // Scene 2: Transition to YELLOW
+    function sceneYellow() {
+      currentState = states.YELLOW;
+      // Animate major problems to checked
+      let step = 0;
+      const depts = ['rolling', 'signal', 'telecom'];
+      function animateMajor() {
+        if (step < 3) {
+          panelStatus[depts[step]][0] = true;
+          updatePanels();
+          step++;
+          setTimeout(animateMajor, 350);
+        } else {
+          setSignal(false, true, false);
+          setOverlay('CASE 2: YELLOW LIGHT - Major problems are fixed, but minor problems remain.');
+          setTimeout(sceneYellowInteract, 1200);
+        }
+      }
+      animateMajor();
+    }
+    // Scene 3: YELLOW INTERACT
+    function sceneYellowInteract() {
+      currentState = states.YELLOW_INTERACT;
+      setSignal(false, true, false, true, false);
+      setOverlay('Minor defaults can be fixed. Do you want to fix them? (YES/NO)');
+      showButtons(true);
+    }
+    // Scene 4A: GREEN (Success)
+    function sceneGreen() {
+      currentState = states.GREEN;
+      showButtons(false);
+      // Animate minor problems to checked
+      let step = 0;
+      const depts = ['rolling', 'signal', 'telecom'];
+      function animateMinor() {
+        if (step < 3) {
+          panelStatus[depts[step]][1] = true;
+          updatePanels();
+          step++;
+          setTimeout(animateMinor, 300);
+        } else {
+          setSignal(false, false, true, false, true);
+          setOverlay('All systems checked! Train departing.');
+          setGate(true);
+          setTimeout(() => {
+            setTrainMoving(true);
+          }, 800);
+        }
+      }
+      animateMinor();
+    }
+    // Scene 4B: RED (Failed)
+    function sceneRedRevert() {
+      currentState = states.RED_REVERT;
+      showButtons(false);
+      setSignal(true, false, false);
+      setOverlay('Minor problems cannot be fixed. Train is delayed. The system is reverted to a \u201Cred light\u201d state.');
+      setGate(false);
+      setTrainMoving(false);
+    }
+    // Button handlers
+    btnYes.onclick = () => {
+      if (currentState === states.YELLOW_INTERACT) {
+        sceneGreen();
+      }
+    };
+    btnNo.onclick = () => {
+      if (currentState === states.YELLOW_INTERACT) {
+        sceneRedRevert();
+      }
+    };
+    // Start animation sequence
+    function startSequence() {
+      sceneRed();
+      setTimeout(sceneYellow, 1800);
+    }
+    // On load
+    window.onload = startSequence;
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1757996834360,
+    "username": "Manya",
+    "password": "$2b$10$LwXfs75uCVm0scIxDPwB7.ZZmi4vu3YlpenCwWecghVI9dfgWeCHy",
+    "role": "admin"
+  },
+  {
+    "id": 1757996887575,
+    "username": "Manya1",
+    "password": "$2b$10$VgSLkKeyYycEiRO2yGaMLu.lva3FlQhCg5auMZZfZWw.ZGzP803AK",
+    "role": "customer"
+  },
+  {
+    "id": 1757998735989,
+    "username": "Manya22",
+    "password": "$2b$10$E7WRP81.QzfhQzwBbiUOrOXJa4OpJY602UVgrzzq86hGuJ1Ac1wRW",
+    "role": "admin"
+  },
+  {
+    "id": 1758000711770,
+    "username": "mahak",
+    "password": "$2b$10$4t54lWuvsLK5KkhP.9duH.f/IcI/xqT7VCrfvxC8pbEZQ2luHX0hu",
+    "role": "admin"
+  },
+  {
+    "id": 1758001096848,
+    "username": "mahak1",
+    "password": "$2b$10$pQaS4gzC/Hy75xfaCh.imuv/b6w0GEAoQpVmhvi6UuJloYpkLRQRK",
+    "role": "customer"
+  },
+  {
+    "id": 1758005891528,
+    "username": "Shashank",
+    "password": "$2b$10$ssiNCFhrHioeDTeQtdOOB.x/td5a/5WpzA69YiQgBgNzBqb76Z162",
+    "role": "customer"
+  },
+  {
+    "id": 1758005928189,
+    "username": "Shashank1",
+    "password": "$2b$10$SPc89mOkXpciynLF5lmVJOu/LNB.fG2r6o6hJN17z2zIyJwNdfNc6",
+    "role": "admin"
+  },
+  {
+    "id": 1759072990732,
+    "username": "manya",
+    "password": "$2b$10$6vCKajcIUKNhQ3iT6UgqbeBS6yXsNFVISabOwK2W8ymP/t8XUWIBW",
+    "role": "customer"
+  },
+  {
+    "id": 1759074438863,
+    "username": "manya56",
+    "password": "$2b$10$M0cWF3vhNmJ.H0y18xJIH.7dcng5d3HwX3VNV5Xq7dKdkpw86LbL2",
+    "role": "customer"
+  },
+  {
+    "id": 1759078578196,
+    "username": "Shashank2",
+    "password": "$2b$10$oZI7QyHmkj2FsaKvgX1t0eJd5VgWcf2jsK.tWB175UUfTQxU95w/a",
+    "role": "admin"
+  },
+  {
+    "id": 1759078718195,
+    "username": "Ramesh",
+    "password": "$2b$10$GXUvKrgp4.xWOTSAJTowpeuoAt4wRE1tHW3LiUbLfTYGQ7nTPU9dS",
+    "role": "customer"
+  }
+]

@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify Operations - Kochi Metro Rail Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <meta name="theme-color" content="#2563eb" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container header-container">
+        <!-- Desktop Navigation -->
+        <nav class="header-nav">
+          <a href="index.html" class="nav-item active" data-tab="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+          </a>
+
+          <div class="nav-dropdown">
+            <button class="nav-item dropdown-toggle" aria-expanded="false">
+              <i class="fas fa-cogs"></i>
+              <span>Operations</span>
+              <i class="fas fa-chevron-down dropdown-arrow"></i>
+            </button>
+            <div class="nav-dropdown-content">
+              <a href="train-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-train"></i>
+                <span>Train Operations</span>
+              </a>
+              <a href="verify-operations.html" class="nav-dropdown-item">
+                <i class="fas fa-check-circle"></i>
+                <span>Verify Operations</span>
+              </a>
+            </div>
+          </div>
+          <a href="https://operation1.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Management</span>
+          </a>
+        
+          
+          <a href="staff-management.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Staff</span>
+          </a>
+
+          <a href="schedule-management.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Schedule</span>
+          </a>
+
+          <a href="live-map.html" class="nav-item">
+            <i class="fas fa-map-marked-alt"></i>
+            <span>Live Map</span>
+          </a>
+
+          <a href="reports1.html" class="nav-item">
+            <i class="fas fa-chart-bar"></i>
+            <span>Reports</span>
+          </a>
+          <a href="https://multitrack-j5ni.onrender.com" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Multitrack</span>
+          </a>
+
+          <a href="finance-department.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Finance</span>
+          </a>
+          
+        </nav>
+
+        <!-- Header Right Controls -->
+        <div class="header-right">
+          <!-- Theme Toggle -->
+          <button
+            class="theme-toggle"
+            id="theme-toggle"
+            aria-label="Toggle theme"
+          >
+            <i class="fas fa-sun theme-icon" id="theme-icon"></i>
+          </button>
+
+          <!-- Notifications -->
+          <div class="notification-container">
+            <button
+              class="notification-btn"
+              id="notification-btn"
+              aria-expanded="false"
+            >
+              <i class="fas fa-bell"></i>
+              <span class="notification-badge">3</span>
+            </button>
+            <div class="notification-dropdown" id="notification-dropdown">
+              <div class="notification-header">
+                <h3>Notifications</h3>
+                <span class="notification-count">3 new</span>
+              </div>
+              <div class="notification-list">
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i
+                      class="fas fa-exclamation-triangle"
+                      style="color: #f59e0b"
+                    ></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">Train Delay Alert</div>
+                    <div class="notification-text">
+                      Train K101 delayed by 5 minutes
+                    </div>
+                    <div class="notification-time">2 minutes ago</div>
+                  </div>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i class="fas fa-info-circle" style="color: #3b82f6"></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">System Update</div>
+                    <div class="notification-text">
+                      Scheduled maintenance at 2:00 AM
+                    </div>
+                    <div class="notification-time">1 hour ago</div>
+                  </div>
+                </div>
+                <div class="notification-item">
+                  <div class="notification-icon">
+                    <i class="fas fa-check-circle" style="color: #10b981"></i>
+                  </div>
+                  <div class="notification-content">
+                    <div class="notification-title">Verification Complete</div>
+                    <div class="notification-text">
+                      All morning operations verified
+                    </div>
+                    <div class="notification-time">3 hours ago</div>
+                  </div>
+                </div>
+              </div>
+              <div class="notification-footer">
+                <button class="view-all-notifications">
+                  View All Notifications
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile -->
+          <div class="profile-container">
+            <button class="profile-btn" id="profile-btn" aria-expanded="false">
+              <img
+                src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=64&h=64&fit=crop&crop=face"
+                alt="Profile"
+                class="profile-avatar"
+              />
+              <span class="profile-name">Admin User</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
+            <div class="profile-dropdown" id="profile-dropdown">
+              <div class="profile-info">
+                <img
+                  src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=96&h=96&fit=crop&crop=face"
+                  alt="Profile"
+                  class="profile-avatar-large"
+                />
+                <div class="profile-details">
+                  <h4>Admin User</h4>
+                  <p>System Administrator</p>
+                </div>
+              </div>
+              <div class="profile-menu">
+                <button class="profile-menu-item" id="profile-settings">
+                  <i class="fas fa-user-cog"></i>
+                  <span>Profile Settings</span>
+                </button>
+                <button class="profile-menu-item" id="change-password">
+                  <i class="fas fa-key"></i>
+                  <span>Change Password</span>
+                </button>
+                <button class="profile-menu-item" id="preferences">
+                  <i class="fas fa-cog"></i>
+                  <span>Preferences</span>
+                </button>
+                <div class="profile-menu-divider"></div>
+                <button class="profile-menu-item logout" id="logout-btn">
+                  <i class="fas fa-sign-out-alt"></i>
+                  <span>Logout</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Menu Toggle -->
+          <button
+            class="mobile-menu-toggle"
+            id="mobile-menu-toggle"
+            aria-expanded="false"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Navigation -->
+      <nav class="mobile-nav" id="mobile-nav">
+        <a href="index.html" class="mobile-nav-item">
+          <i class="fas fa-tachometer-alt"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="train-operations.html" class="mobile-nav-item">
+          <i class="fas fa-train"></i>
+          <span>Train Operations</span>
+        </a>
+        <a href="verify-operations.html" class="mobile-nav-item active">
+          <i class="fas fa-check-circle"></i>
+          <span>Verify Operations</span>
+        </a>
+        <a href="staff-management.html" class="mobile-nav-item">
+          <i class="fas fa-users"></i>
+          <span>Staff Management</span>
+        </a>
+        <a href="schedule-management.html" class="mobile-nav-item">
+          <i class="fas fa-calendar-alt"></i>
+          <span>Schedule Management</span>
+        </a>
+        <a href="live-map.html" class="mobile-nav-item">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>Live Map</span>
+        </a>
+        <a href="reports.html" class="mobile-nav-item">
+          <i class="fas fa-chart-bar"></i>
+          <span>Reports</span>
+        </a>
+        <div class="mobile-nav-divider"></div>
+        <button class="mobile-nav-item" id="mobile-profile-settings">
+          <i class="fas fa-user-cog"></i>
+          <span>Profile Settings</span>
+        </button>
+        <button class="mobile-nav-item logout" id="mobile-logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div>
+            <h1>Verify Operations</h1>
+            <p>Review and verify all operational activities</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-primary">
+              <i class="fas fa-download"></i>
+              Export Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Verification Grid -->
+        <div class="verification-grid">
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Morning Operations - K101</h3>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Route:</strong> Aluva - Tripunithura</p>
+              <p><strong>Driver:</strong> Rajesh Kumar</p>
+              <p><strong>Start Time:</strong> 06:00 AM</p>
+              <p><strong>Status:</strong> Completed successfully</p>
+            </div>
+            <div class="verification-actions">
+              <button
+                class="btn btn-sm btn-success btn-verify"
+                data-train="K101"
+              >
+                <i class="fas fa-check"></i>
+                Verify
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Evening Operations - K102</h3>
+              <span class="status-badge completed">Verified</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Route:</strong> Tripunithura - Aluva</p>
+              <p><strong>Driver:</strong> Priya Nair</p>
+              <p><strong>Start Time:</strong> 06:30 AM</p>
+              <p><strong>Status:</strong> Verified by supervisor</p>
+            </div>
+            <div class="verification-actions">
+              <button class="btn btn-sm btn-secondary" disabled>
+                <i class="fas fa-check-circle"></i>
+                Verified
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Maintenance Check - K104</h3>
+              <span class="status-badge in-progress">In Progress</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Type:</strong> Routine Maintenance</p>
+              <p><strong>Technician:</strong> Arun Krishnan</p>
+              <p><strong>Start Time:</strong> 10:00 AM</p>
+              <p><strong>Status:</strong> 75% completed</p>
+            </div>
+            <div class="verification-actions">
+              <button
+                class="btn btn-sm btn-warning btn-verify"
+                data-train="K104"
+              >
+                <i class="fas fa-clock"></i>
+                Monitor
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Safety Inspection - K103</h3>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Type:</strong> Weekly Safety Check</p>
+              <p><strong>Inspector:</strong> Suresh Babu</p>
+              <p><strong>Scheduled:</strong> 02:00 PM</p>
+              <p><strong>Status:</strong> Awaiting verification</p>
+            </div>
+            <div class="verification-actions">
+              <button
+                class="btn btn-sm btn-success btn-verify"
+                data-train="K103"
+              >
+                <i class="fas fa-check"></i>
+                Verify
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Route Inspection - Line 1</h3>
+              <span class="status-badge completed">Verified</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Section:</strong> Aluva to Edappally</p>
+              <p><strong>Inspector:</strong> Meera Thomas</p>
+              <p><strong>Completed:</strong> 11:30 AM</p>
+              <p><strong>Status:</strong> All systems normal</p>
+            </div>
+            <div class="verification-actions">
+              <button class="btn btn-sm btn-secondary" disabled>
+                <i class="fas fa-check-circle"></i>
+                Verified
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+
+          <div class="verification-card">
+            <div class="verification-header">
+              <h3>Emergency Drill - Station 5</h3>
+              <span class="status-badge pending">Pending</span>
+            </div>
+            <div class="verification-details">
+              <p><strong>Location:</strong> Ernakulam South</p>
+              <p><strong>Coordinator:</strong> Ravi Menon</p>
+              <p><strong>Scheduled:</strong> 03:00 PM</p>
+              <p><strong>Status:</strong> Ready for verification</p>
+            </div>
+            <div class="verification-actions">
+              <button
+                class="btn btn-sm btn-success btn-verify"
+                data-train="Station5"
+              >
+                <i class="fas fa-check"></i>
+                Verify
+              </button>
+              <button class="btn btn-sm btn-secondary">
+                <i class="fas fa-eye"></i>
+                Details
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Verification Modal -->
+    <div class="modal" id="verification-modal" aria-hidden="true">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Verify Operations</h2>
+          <button
+            class="modal-close"
+            id="verification-modal-close"
+            aria-label="Close modal"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>
+            Are you sure you want to verify operations for
+            <strong id="verify-train-id">K101</strong>?
+          </p>
+
+          <div class="verification-checklist">
+            <h4>Verification Checklist:</h4>
+            <label class="checkbox-item">
+              <input type="checkbox" required />
+              <span class="checkmark"></span>
+              All safety protocols followed
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" required />
+              <span class="checkmark"></span>
+              Documentation complete
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" required />
+              <span class="checkmark"></span>
+              No incidents reported
+            </label>
+            <label class="checkbox-item">
+              <input type="checkbox" required />
+              <span class="checkmark"></span>
+              Performance within standards
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="cancel-verification">
+            Cancel
+          </button>
+          <button class="btn btn-success" id="confirm-verification">
+            Confirm Verification
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="multipage-script.js"></script>
+  </body>
+</html>
