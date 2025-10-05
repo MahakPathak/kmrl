@@ -1,127 +1,85 @@
 import express from "express";
-import fs from "fs";
+import mongoose from "mongoose";
+import cors from "cors";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import cors from "cors";
-import bodyParser from "body-parser";
-import path from "path";
-import { fileURLToPath } from "url";
-import mongoose from "mongoose";
-import dotenv from "dotenv"; // ✅ Add this line
-
-dotenv.config(); // ✅ Load environment variables from .env
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || "mahak_secret_2025";
-
-// ✅ Connect to MongoDB Atlas
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// ✅ Middleware
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-// ✅ Serve static frontend files
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "public")));
+// ✅ MongoDB connection
+const MONGO_URI = process.env.MONGO_URI || "your-mongodb-connection-string-here";
 
-// ✅ Path to users.json
-const usersFile = path.join(__dirname, "users.json");
+mongoose
+  .connect(MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// ✅ Helper functions
-const readUsers = () => {
-  try {
-    if (!fs.existsSync(usersFile)) return [];
-    const data = fs.readFileSync(usersFile, "utf8");
-    return JSON.parse(data || "[]");
-  } catch (err) {
-    console.error("Error reading users.json:", err);
-    return [];
-  }
-};
+// ✅ User Schema & Model
+const userSchema = new mongoose.Schema({
+  username: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  role: { type: String, enum: ["customer", "admin"], default: "customer" }
+});
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-const writeUsers = (users) => {
-  try {
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
-  } catch (err) {
-    console.error("Error writing users.json:", err);
-  }
-};
-
-// ✅ SIGNUP
+// ✅ Signup route
 app.post("/api/signup", async (req, res) => {
   try {
     const { username, password, role } = req.body;
-    if (!username || !password || !role)
-      return res.status(400).json({ message: "All fields are required" });
 
-    const users = readUsers();
-    if (users.find((u) => u.username === username))
-      return res.status(400).json({ message: "User already exists" });
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: "Username already exists" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    users.push({ id: Date.now(), username, password: hashedPassword, role });
-    writeUsers(users);
+    await User.create({ username, password: hashedPassword, role });
 
-    res.json({ message: "Signup successful" });
+    res.json({ message: "Signup successful! You can now log in." });
   } catch (err) {
     console.error("Signup Error:", err);
-    res.status(500).json({ message: "A server error occurred during signup" });
+    res.status(500).json({ message: "Server error during signup" });
   }
 });
 
-// ✅ LOGIN
+// ✅ Login route
 app.post("/api/login", async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password)
-      return res.status(400).json({ message: "Both fields required" });
 
-    const users = readUsers();
-    const user = users.find((u) => u.username === username);
-    if (!user) return res.status(400).json({ message: "Invalid username" });
+    const user = await User.findOne({ username });
+    if (!user) return res.status(400).json({ message: "Invalid username or password" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid password" });
+    if (!isMatch) return res.status(400).json({ message: "Invalid username or password" });
 
     const token = jwt.sign(
-      { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET || "supersecretkey",
       { expiresIn: "1h" }
     );
 
-    res.json({ token, message: "Login successful", role: user.role });
+    res.json({
+      message: "Login successful!",
+      token,
+      role: user.role
+    });
   } catch (err) {
     console.error("Login Error:", err);
-    res.status(500).json({ message: "A server error occurred during login" });
+    res.status(500).json({ message: "Server error during login" });
   }
 });
 
-// ✅ Routes
-app.get("/", (req, res) =>
-  res.sendFile(path.join(__dirname, "public", "index.html"))
-);
-app.get("/dashboard", (req, res) =>
-  res.sendFile(path.join(__dirname, "public", "dashboard.html"))
-);
-app.get("/userpage.html", (req, res) =>
-  res.sendFile(path.join(__dirname, "public", "userpage.html"))
-);
+// ✅ Default route
+app.get("/", (req, res) => {
+  res.send("KMRL API is running ✅");
+});
 
-// ✅ Export for Vercel
-export default app;
-
-// ✅ Local run
-if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () =>
-    console.log(`✅ Server running on http://localhost:${PORT}`)
-  );
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
