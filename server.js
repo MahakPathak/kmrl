@@ -13,7 +13,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Use env variable in production
+const JWT_SECRET = process.env.JWT_SECRET || "mahak_secret_2025"; // Use env variable in production
 
 // ✅ Connect to MongoDB Atlas
 mongoose
