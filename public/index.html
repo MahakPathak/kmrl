@@ -220,7 +220,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   localStorage.setItem("role", data.role);
 
   if (data.role === "admin") {
-    window.location.href = "/dashboard";
+    window.location.href = "/dashboard.html";
   } else {
     window.location.href = "/userpage.html";
   }
