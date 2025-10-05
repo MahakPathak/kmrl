@@ -64,5 +64,17 @@
     "username": "Ramesh",
     "password": "$2b$10$GXUvKrgp4.xWOTSAJTowpeuoAt4wRE1tHW3LiUbLfTYGQ7nTPU9dS",
     "role": "customer"
+  },
+  {
+    "id": 1759684962133,
+    "username": "Mahak67",
+    "password": "$2b$10$DuEqxLhfKEmqQXFPa.hYYejH7fCNV7ilTumoaVZurbL8QAwYafvM2",
+    "role": "admin"
+  },
+  {
+    "id": 1759685771366,
+    "username": "Mahak",
+    "password": "$2b$10$kbwv8UoN4aSPczGE21YHAuL58ErzbRR8xd1hZhMEudDlksVtkATy2",
+    "role": "customer"
   }
 ]

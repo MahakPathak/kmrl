@@ -1,89 +1,110 @@
 import express from "express";
+import fs from "fs";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import cors from "cors";
 import bodyParser from "body-parser";
-
-// Vercel will automatically load environment variables for you.
-// You'll get these from your database provider (e.g., Vercel Postgres).
-// const db = createPool({ connectionString: process.env.POSTGRES_URL });
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
-const JWT_SECRET = process.env.JWT_SECRET || "your_fallback_secret_key";
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = "your_secret_key"; // ⚠️ Replace with env var in production
 
+// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// ❌ DELETED: All fs, path, __filename, and __dirname logic is gone.
-// It's the cause of the crash and won't work on Vercel.
+// Static frontend files
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ MOVED: Your HTML files (dashboard.html, userpage.html) should be
-// in a "public" folder at the root of your project. Vercel will serve
-// them automatically. This is more efficient.
-// app.use(express.static("public")); // This line can be removed if vercel.json is configured.
+// Path to users.json
+const usersFile = path.join(__dirname, "users.json");
 
+// Helper functions for user storage
+const readUsers = () => {
+  try {
+    if (!fs.existsSync(usersFile)) return [];
+    const data = fs.readFileSync(usersFile, "utf8");
+    return JSON.parse(data || "[]");
+  } catch (err) {
+    console.error("Error reading users.json:", err);
+    return [];
+  }
+};
+
+const writeUsers = (users) => {
+  try {
+    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+  } catch (err) {
+    console.error("Error writing users.json:", err);
+  }
+};
+
+// ✅ SIGNUP Route
 app.post("/api/signup", async (req, res) => {
-    const { username, password, role } = req.body;
+  const { username, password, role } = req.body;
+  if (!username || !password || !role) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
 
-    try {
-        // --- DATABASE LOGIC ---
-        // 1. Check if user already exists in your database
-        // const existingUser = await db.query('SELECT * FROM users WHERE username = $1', [username]);
-        // if (existingUser.rows.length > 0) {
-        //   return res.status(400).json({ message: "User already exists" });
-        // }
+  let users = readUsers();
+  if (users.find((u) => u.username === username)) {
+    return res.status(400).json({ message: "User already exists" });
+  }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = { id: Date.now(), username, password: hashedPassword, role };
 
-        // 2. Insert the new user into the database
-        // await db.query(
-        //   'INSERT INTO users (username, password, role) VALUES ($1, $2, $3)',
-        //   [username, hashedPassword, role]
-        // );
+  users.push(newUser);
+  writeUsers(users);
 
-        res.status(201).json({ message: "Signup successful" });
-    } catch (error) {
-        console.error("Signup Error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+  res.json({ message: "Signup successful" });
 });
 
+// ✅ LOGIN Route
 app.post("/api/login", async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+  if (!username || !password)
+    return res.status(400).json({ message: "Both fields required" });
 
-    try {
-        // --- DATABASE LOGIC ---
-        // 1. Find the user in the database
-        // const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
-        // const user = result.rows[0];
-        // if (!user) return res.status(400).json({ message: "Invalid username" });
+  const users = readUsers();
+  const user = users.find((u) => u.username === username);
+  if (!user) return res.status(400).json({ message: "Invalid username" });
 
-        // For demonstration, let's assume you fetched a user object.
-        // In a real app, the following lines would use the 'user' from the DB.
-        const user = { id: 1, username: 'testuser', password: 'hashed_password_from_db', role: 'user'}; // Mock user
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) return res.status(400).json({ message: "Invalid password" });
 
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) return res.status(400).json({ message: "Invalid password" });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 
-        const token = jwt.sign(
-            { id: user.id, username: user.username, role: user.role },
-            JWT_SECRET,
-            { expiresIn: "1h" }
-        );
-
-        res.json({ token, message: "Login successful", role: user.role });
-    } catch (error) {
-        console.error("Login Error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+  res.json({ token, message: "Login successful", role: user.role });
 });
 
+// ✅ Admin Dashboard page
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
+});
 
-// ❌ DELETED: The app.get routes for HTML files are removed.
-// Vercel serves files from the "public" directory automatically.
+// ✅ User page
+app.get("/userpage.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "userpage.html"));
+});
 
-// ❌ DELETED: app.listen() is not needed for Vercel.
-// Vercel handles the server lifecycle.
+// ✅ Default route (Home)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-// ✅ ADDED: Export the Express app for Vercel to use.
+// ✅ Export app for Vercel
 export default app;
+
+// ✅ For local run
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+}
