@@ -452,14 +452,12 @@ function handleLogout() {
 function initializeThemeToggle() {
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
-    
-    // Load saved theme or detect system preference
+
+    // ✅ Always start with light theme unless user previously switched
     const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-    
+    const initialTheme = savedTheme || 'light';
     setTheme(initialTheme);
-    
+
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -468,6 +466,7 @@ function initializeThemeToggle() {
         });
     }
 }
+
 
 function setTheme(theme) {
     const themeIcon = document.getElementById('theme-icon');
