@@ -6,16 +6,16 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
-
-import dotenv from "dotenv";
 import mongoose from "mongoose";
-
-
-
 import dotenv from "dotenv";
+
 dotenv.config();
 
+const app = express();
+const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Use env variable in production
 
+// ✅ Connect to MongoDB Atlas
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
@@ -24,23 +24,19 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-const app = express();
-const PORT = process.env.PORT || 5000;
-const JWT_SECRET = "your_secret_key"; // ⚠️ Replace with env var in production
-
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(bodyParser.json());
 
-// Static frontend files
+// ✅ Serve static frontend files
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "public")));
 
-// Path to users.json
+// ✅ Path to users.json (temporary local user store)
 const usersFile = path.join(__dirname, "users.json");
 
-// Helper functions for user storage
+// ✅ Helper functions
 const readUsers = () => {
   try {
     if (!fs.existsSync(usersFile)) return [];
@@ -60,28 +56,24 @@ const writeUsers = (users) => {
   }
 };
 
-// ✅ SIGNUP Route
+// ✅ SIGNUP
 app.post("/api/signup", async (req, res) => {
   const { username, password, role } = req.body;
-  if (!username || !password || !role) {
+  if (!username || !password || !role)
     return res.status(400).json({ message: "All fields are required" });
-  }
 
-  let users = readUsers();
-  if (users.find((u) => u.username === username)) {
+  const users = readUsers();
+  if (users.find((u) => u.username === username))
     return res.status(400).json({ message: "User already exists" });
-  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = { id: Date.now(), username, password: hashedPassword, role };
-
-  users.push(newUser);
+  users.push({ id: Date.now(), username, password: hashedPassword, role });
   writeUsers(users);
 
   res.json({ message: "Signup successful" });
 });
 
-// ✅ LOGIN Route
+// ✅ LOGIN
 app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password)
@@ -103,33 +95,15 @@ app.post("/api/login", async (req, res) => {
   res.json({ token, message: "Login successful", role: user.role });
 });
 
-// ✅ Admin Dashboard page
-app.get("/dashboard", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "dashboard.html"));
-});
+// ✅ Routes
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/dashboard", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard.html")));
+app.get("/userpage.html", (req, res) => res.sendFile(path.join(__dirname, "public", "userpage.html")));
 
-// ✅ User page
-app.get("/userpage.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "userpage.html"));
-});
-
-// ✅ Default route (Home)
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// ✅ Export app for Vercel
+// ✅ Export for Vercel
 export default app;
 
-// ✅ For local run
+// ✅ Local run
 if (process.env.NODE_ENV !== "production") {
-  app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+  app.listen(PORT, () => console.log(`✅ Server running on http://localhost:${PORT}`));
 }
-
-
-mongoose.connect("mongodb+srv://pathakmahak64_db_user:KG9x5xSyqXs5WPfr@cluster0.lr4dizd.mongodb.net/kmrl?retryWrites=true&w=majority", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log("✅ Connected to MongoDB Atlas"))
-.catch((err) => console.error("❌ MongoDB connection error:", err));
