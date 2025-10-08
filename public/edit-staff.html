@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Staff Status - Kochi Metro Rail Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <meta name="theme-color" content="#17a2b8" />
+    <style>
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            margin-top: 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; margin-bottom: 8px; color: #333; }
+        .form-group input, .form-group select {
+            padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #17a2b8;
+            box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.2);
+            outline: none;
+        }
+        /* Style for non-editable fields */
+        .form-group input[readonly], .form-group select[disabled] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+            color: #6c757d;
+        }
+        .form-actions {
+            margin-top: 30px; display: flex; justify-content: flex-end; gap: 15px;
+            border-top: 1px solid #eee; padding-top: 25px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container header-container">
+            <nav class="header-nav">
+                <a href="staff-management.html" class="nav-item">
+                    <i class="fas fa-arrow-left"></i><span>Back to Staff List</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <div class="page-header">
+          <div>
+            <h1>Edit Staff Status</h1>
+            <p>Update the duty status for this staff member.</p>
+          </div>
+        </div>
+
+        <div class="form-container">
+          <form id="edit-staff-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" required readonly />
+              </div>
+              <div class="form-group">
+                <label for="employeeId">Employee ID</label>
+                <input type="text" id="employeeId" required readonly />
+              </div>
+              <div class="form-group">
+                <label for="department">Department / Role</label>
+                <select id="department" required disabled>
+                  <option value="Train Driver">Train Driver</option>
+                  <option value="Station Manager">Station Manager</option>
+                  <option value="Maintenance Technician">Maintenance Technician</option>
+                  <option value="Security Officer">Security Officer</option>
+                  <option value="Customer Service">Customer Service</option>
+                  <option value="Control Room Operator">Control Room Operator</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="status">Status (Editable)</label>
+                <select id="status" required>
+                  <option value="On Duty">On Duty</option>
+                  <option value="Off Duty">Off Duty</option>
+                  <option value="On Leave">On Leave</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <a href="staff-management.html" class="btn btn-secondary">Cancel</a>
+              <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('edit-staff-form');
+        const KEY = 'kochi_staff';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const staffIdToEdit = urlParams.get('id');
+        
+        let allStaff = JSON.parse(localStorage.getItem(KEY) || '[]');
+        const staffMember = allStaff.find(s => s.employeeId === staffIdToEdit);
+
+        if (!staffMember) {
+            alert('Staff member not found!');
+            window.location.href = 'staff-management.html';
+            return;
+        }
+
+        // Populate the form with existing data
+        document.getElementById('name').value = staffMember.name;
+        document.getElementById('employeeId').value = staffMember.employeeId;
+        document.getElementById('department').value = staffMember.department;
+        document.getElementById('status').value = staffMember.status;
+        
+        // Handle form submission to SAVE changes
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const staffIndex = allStaff.findIndex(s => s.employeeId === staffIdToEdit);
+
+            if (staffIndex > -1) {
+                // ✅ Only the status is updated now
+                allStaff[staffIndex].status = document.getElementById('status').value;
+
+                // Save the entire updated array back to localStorage
+                localStorage.setItem(KEY, JSON.stringify(allStaff));
+                alert('Staff status updated successfully!');
+                window.location.href = 'staff-management.html';
+            } else {
+                alert('Error: Could not find staff member to update.');
+            }
+        });
+    });
+    </script>
+</body>
+</html>
