@@ -173,9 +173,43 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </button>
+                    <!-- ✅ START: ADDED NOTIFICATION CONTENT -->
                     <div class="notification-dropdown" id="notification-dropdown">
-                        <!-- Notification content here -->
+                        <div class="notification-header">
+                            <h3>Notifications</h3>
+                            <span class="notification-count">3 new</span>
+                        </div>
+                        <div class="notification-list">
+                            <div class="notification-item">
+                                <div class="notification-icon"><i class="fas fa-exclamation-triangle" style="color: #f59e0b"></i></div>
+                                <div class="notification-content">
+                                    <div class="notification-title">Train Delay Alert</div>
+                                    <div class="notification-text">Train K101 delayed by 5 minutes</div>
+                                    <div class="notification-time">2 minutes ago</div>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <div class="notification-icon"><i class="fas fa-info-circle" style="color: #3b82f6"></i></div>
+                                <div class="notification-content">
+                                    <div class="notification-title">System Update</div>
+                                    <div class="notification-text">Scheduled maintenance at 2:00 AM</div>
+                                    <div class="notification-time">1 hour ago</div>
+                                </div>
+                            </div>
+                            <div class="notification-item">
+                                <div class="notification-icon"><i class="fas fa-check-circle" style="color: #10b981"></i></div>
+                                <div class="notification-content">
+                                    <div class="notification-title">Verification Complete</div>
+                                    <div class="notification-text">All morning operations verified</div>
+                                    <div class="notification-time">3 hours ago</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="notification-footer">
+                            <button class="view-all-notifications">View All Notifications</button>
+                        </div>
                     </div>
+                    <!-- ✅ END: ADDED NOTIFICATION CONTENT -->
                 </div>
                 <div class="profile-container">
                     <button class="profile-btn" id="profile-btn" aria-expanded="false">
@@ -184,9 +218,24 @@
                         <span class="profile-name">Admin User</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
+                    <!-- ✅ START: ADDED PROFILE CONTENT -->
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <!-- Profile dropdown content here -->
+                        <div class="profile-info">
+                            <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=96&h=96&fit=crop&crop=face"
+                                alt="Profile" class="profile-avatar-large" />
+                            <div class="profile-details">
+                                <h4>Admin User</h4>
+                                <p>System Administrator</p>
+                            </div>
+                        </div>
+                        <div class="profile-menu">
+                            <button class="profile-menu-item"><i class="fas fa-user-cog"></i><span>Profile Settings</span></button>
+                            <button class="profile-menu-item"><i class="fas fa-key"></i><span>Change Password</span></button>
+                            <div class="profile-menu-divider"></div>
+                            <button class="profile-menu-item logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i><span>Logout</span></button>
+                        </div>
                     </div>
+                    <!-- ✅ END: ADDED PROFILE CONTENT -->
                 </div>
                 <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-expanded="false">
                     <i class="fas fa-bars"></i>
@@ -295,13 +344,11 @@
         document.getElementById('modalId').textContent = card.dataset.employeeid;
         document.getElementById('modalStatus').textContent = card.dataset.status;
         modal.dataset.currentId = card.dataset.employeeid;
-        // CORRECTED: Use .show class consistent with styles.css
         modal.classList.add('show');
         modal.setAttribute('aria-hidden', 'false');
       }
 
       function hideModal() {
-        // CORRECTED: Use .show class consistent with styles.css
         modal.classList.remove('show');
         modal.setAttribute('aria-hidden', 'true');
       }
@@ -334,7 +381,6 @@
         if (e.target.classList.contains('modal')) hideModal();
       });
       window.addEventListener('keyup', (e) => {
-        // CORRECTED: Use .show class consistent with styles.css
         if (e.key === 'Escape' && modal.classList.contains('show')) {
           hideModal();
         }
